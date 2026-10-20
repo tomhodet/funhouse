@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fun House · Livret d'accueil</title>
+<meta name="description" content="Le livret d'accueil de la Fun House, à Moidrey : wifi, arrivée et départ, règles de la maison, bonnes adresses et contact de la conciergerie Clés des Merveilles.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F5F1E8">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fun House">
+<meta name="format-detection" content="telephone=no">
+
+<!-- Aperçu du lien dans iMessage, WhatsApp, Messenger -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Fun House · Livret d'accueil">
+<meta property="og:description" content="Wifi, arrivée et départ, règles de la maison, bonnes adresses : tout votre séjour, dans votre poche.">
+<meta property="og:image" content="https://tomhodet.github.io/funhouse/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://tomhodet.github.io/funhouse/">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/playfair-display-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/playfair-display-latin-500-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/montserrat-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="img/hero-billard.webp" as="image" fetchpriority="high">
+<link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+<script>document.documentElement.classList.add('js');</script>
+
+<!-- Ouverture : la clé se dessine, tourne dans la serrure, les portes s'ouvrent -->
+<div id="ouverture" aria-hidden="true">
+  <div class="porte gauche"></div>
+  <div class="porte droite"></div>
+  <div class="ouv-centre">
+    <svg class="ouv-cle" viewBox="0 0 843 210"><path id="ouv-cle-path" d=""/></svg>
+    <p class="ouv-mot">Clés des Merveilles</p>
+  </div>
+  <button type="button" class="ouv-passer" id="ouv-passer">Passer</button>
+</div>
+
+<div class="app" id="app">
+  <header class="haut">
+    <img class="haut-logo" src="img/logo-cdm.png" alt="CDM Conciergerie, Clés des Merveilles" width="790" height="316">
+    <div class="langues" role="group" aria-label="Langue / Language">
+      <button type="button" data-lang="fr" aria-pressed="true">FR</button>
+      <span aria-hidden="true">·</span>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+  <main id="accueil"></main>
+</div>
+
+<div id="pages"></div>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photos"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<noscript>
+  <div style="padding:24px;font-family:Arial,sans-serif;background:#F5F1E8;color:#152A35">
+    <h1>Fun House</h1>
+    <p>Wifi : BBOX-E0B1A021 · mot de passe : PnJfz9CNZT2bJd76LJ</p>
+    <p>Alicia, Conciergerie Clés des Merveilles : 06 40 57 18 82</p>
+    <p>Urgences : 112 · SAMU 15 · Pompiers 18 · Police 17</p>
+  </div>
+</noscript>
+
+<script src="content.js?v=2"></script>
+<script src="cle.js" defer></script>
+<script src="qrcode.min.js" defer></script>
+<script src="app.js?v=2" defer></script>
+</body>
+</html>

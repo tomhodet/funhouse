@@ -2,89 +2,34 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fun House · Livret d'accueil</title>
-<meta name="description" content="Tout pour votre séjour à la Fun House, à Moidrey : wifi, arrivée et départ, règles de la maison, bonnes adresses et contact de la conciergerie.">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#F5F1E8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#10222B" media="(prefers-color-scheme: dark)">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Fun House">
-<meta name="format-detection" content="telephone=yes">
-
-<!-- Aperçu du lien dans iMessage, WhatsApp, Messenger -->
+<meta name="theme-color" content="#F5F1E8">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Fun House · Livret d'accueil">
-<meta property="og:description" content="Wifi, arrivée et départ, règles de la maison, bonnes adresses, contact de la conciergerie : tout votre séjour dans votre poche.">
-<meta property="og:image" content="https://funhouse.conciergerie-cdm.fr/img/og.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:url" content="https://funhouse.conciergerie-cdm.fr/">
-<meta property="og:locale" content="fr_FR">
-<meta name="twitter:card" content="summary_large_image">
-
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="preload" href="fonts/playfair-display-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/playfair-display-latin-500-italic.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="video/hero-poster.webp" as="image">
-<link rel="stylesheet" href="styles.css">
+<meta property="og:description" content="Wifi, arrivée et départ, règles de la maison, bonnes adresses : tout votre séjour, dans votre poche.">
+<meta property="og:image" content="https://tomhodet.github.io/funhouse/img/og.jpg">
+<meta property="og:url" content="https://tomhodet.github.io/funhouse/">
+<link rel="canonical" href="https://tomhodet.github.io/funhouse/">
+<meta http-equiv="refresh" content="1; url=../">
+<style>html,body{margin:0;height:100%;background:#F5F1E8}</style>
+<script>
+  /* Ancienne adresse du livret : on retire l'ancien service worker puis on renvoie vers la nouvelle version. */
+  (function () {
+    var cible = '../' + location.search + location.hash;
+    try {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (rs) {
+          return Promise.all(rs.filter(function (r) { return r.scope.indexOf('/funhouse-app-netlify/') > -1; }).map(function (r) { return r.unregister(); }));
+        }).catch(function () {}).then(function () { location.replace(cible); });
+        setTimeout(function () { location.replace(cible); }, 400);
+        return;
+      }
+    } catch (e) {}
+    location.replace(cible);
+  })();
+</script>
 </head>
-<body>
-<script>document.documentElement.classList.add('js');</script>
-
-<!-- Ouverture : la clé du logo se dessine, puis le logo complet apparaît -->
-<div id="ouverture" aria-hidden="true">
-  <div class="ouv-boite">
-    <img id="ouv-logo" src="img/logo-cdm.png" alt="" width="790" height="316">
-    <svg class="ouv-cle" viewBox="0 0 843 210" aria-hidden="true"><path id="ouv-cle-path" d=""/></svg>
-  </div>
-  <div class="ouv-mot">Conciergerie Clés des Merveilles</div>
-  <button type="button" class="ouv-passer" id="ouv-passer">Passer</button>
-</div>
-
-<div class="app" id="app">
-  <header class="hero" id="hero">
-    <img class="poster" src="video/hero-poster.webp" alt="" width="720" height="1280" fetchpriority="high">
-    <video id="hero-video" muted loop playsinline preload="none" poster="video/hero-poster.webp" aria-hidden="true">
-      <source src="video/hero.mp4" type="video/mp4">
-    </video>
-    <div class="hero-haut">
-      <a class="marque" href="#/" aria-label="Fun House, accueil"><img src="img/logo-cdm.png" alt="CDM Conciergerie, Clés des Merveilles" width="790" height="316"></a>
-      <div class="hero-actions">
-        <div class="langue" role="group" aria-label="Langue / Language">
-          <button type="button" data-lang="fr" aria-pressed="true">FR</button>
-          <button type="button" data-lang="en" aria-pressed="false">EN</button>
-        </div>
-        <button type="button" class="btn-ico" id="btn-partager" aria-label="Partager"></button>
-      </div>
-    </div>
-    <div class="hero-texte" id="hero-texte"></div>
-  </header>
-
-  <main class="contenu" id="accueil"></main>
-</div>
-
-<div id="pages"></div>
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photos"></div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<noscript>
-  <div style="padding:24px;font-family:Arial,sans-serif">
-    <h1>Fun House</h1>
-    <p>Wifi : BBOX-E0B1A021 · mot de passe : PnJfz9CNZT2bJd76LJ</p>
-    <p>Alicia, Conciergerie Clés des Merveilles : 06 40 57 18 82</p>
-    <p>Urgences : 112 · SAMU 15 · Pompiers 18 · Police 17</p>
-  </div>
-</noscript>
-
-<script src="content.js"></script>
-<script src="cle.js" defer></script>
-<script src="qrcode.min.js" defer></script>
-<script src="app.js" defer></script>
-</body>
+<body></body>
 </html>
