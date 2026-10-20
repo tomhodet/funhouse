@@ -53,7 +53,8 @@ window.FH_CONFIG = {
     "lat": 48.5786,
     "lon": -1.4898
   },
-  "marees": "https://marine.meteoconsult.fr/meteo-marine/horaires-maree-mont-saint-michel-950-0.php"
+  "marees": "https://marine.meteoconsult.fr/meteo-marine/horaires-maree-mont-saint-michel-950-0.php",
+  "meteo": false
 };
 
 window.FH_CONTENT = {

@@ -286,6 +286,7 @@
   let cielData = null;
   function chargerCiel() {
     if (demo.m != null && demo.m !== '') { cielData = { t: 12, code: +demo.m }; majCiel(); return; }
+    if (!CFG.meteo) { cielData = null; majCiel(); return; }
     const cache = store.get('fh-ciel', null);
     if (cache && Date.now() - cache.t < 30 * 60000) { cielData = cache.d; majCiel(); return; }
     majCiel();

@@ -20,9 +20,13 @@ Les photos sont dans `img/`, en noir et blanc chaud, restaurées par IA à parti
 
 Après un changement de photos, ouvrir `sw.js` et augmenter la version (`funhouse-v2` devient `funhouse-v3`) pour que les téléphones rechargent les images.
 
-## Météo et marées
+## Accueil, météo et marées
 
-La carte « En ce moment sur la baie » interroge Open-Meteo (gratuit, sans clé) depuis le téléphone du voyageur. Sans réseau, elle affiche seulement l'heure du coucher ou du lever du soleil, calculée sur place. Le lien des marées pointe vers les horaires du Mont-Saint-Michel sur Météo Consult (`marees` dans `content.js`).
+L'arche de l'accueil est une illustration de la baie calculée sur le téléphone : position réelle du soleil et de la lune à Moidrey, couleurs du jour, du coucher et de la nuit, Mont éclairé le soir. Aucune donnée n'est envoyée.
+
+La météo en direct (nuages, pluie, brume, température) est prête mais désactivée : `meteo` vaut `false` dans `content.js`. Elle utilise Open-Meteo, dont l'offre gratuite est réservée à un usage non commercial. La passer à `true` seulement avec leur accord (info@open-meteo.com) ou un abonnement.
+
+Le lien des marées pointe vers les horaires du Mont-Saint-Michel sur Météo Consult (`marees` dans `content.js`).
 
 ## Ancienne adresse
 
