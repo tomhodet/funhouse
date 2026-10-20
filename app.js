@@ -79,6 +79,19 @@
   };
   I.soleil = '<circle cx="12" cy="14" r="4"/><path d="M3 18h18"/><path d="M12 6V4M5.6 8.6 4.2 7.2M18.4 8.6l1.4-1.4M3.5 14H2M22 14h-1.5"/><path d="M7 21h10"/>';
   I.couleur = '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17" fill="currentColor" stroke="none" opacity=".35"/>';
+  /* Ciel */
+  I.cielSoleil = '<circle cx="12" cy="12" r="4.2"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>';
+  I.cielLune = '<path d="M19.5 14.2A7.5 7.5 0 0 1 9.8 4.5a7.5 7.5 0 1 0 9.7 9.7z"/>';
+  I.cielVoile = '<path d="M7 10.5a4 4 0 1 1 7.6-1.7A3.3 3.3 0 0 1 16.5 15H7.5a2.3 2.3 0 0 1-.5-4.5z"/><path d="M4 19h12M8 22h6" opacity=".6"/>';
+  I.cielNuage = '<path d="M7 18a4 4 0 0 1-.6-7.95A5.5 5.5 0 0 1 17 9.5a3.8 3.8 0 0 1 .5 7.5H7z"/>';
+  I.cielNuageSoleil = '<path d="M9 17a3.5 3.5 0 0 1-.4-7A4.6 4.6 0 0 1 17.5 10a3.2 3.2 0 0 1 .3 6.4L9 17z"/><path d="M6.5 8.5A3.5 3.5 0 0 1 12.8 6M5 3v1.5M2 6.5h1.5M3.4 3.4l1 1"/>';
+  I.cielBrume = '<path d="M4 9h16M3 13h18M5 17h14M8 21h8" opacity=".9"/>';
+  I.cielPluie = '<path d="M7 15a4 4 0 0 1-.6-7.95A5.5 5.5 0 0 1 17 6.5a3.8 3.8 0 0 1 .5 7.5H7z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>';
+  I.cielNeige = '<path d="M7 15a4 4 0 0 1-.6-7.95A5.5 5.5 0 0 1 17 6.5a3.8 3.8 0 0 1 .5 7.5H7z"/><path d="M8 19h.01M12 21h.01M16 19h.01M10 22h.01M14 23h.01" stroke-width="2.2"/>';
+  I.cielOrage = '<path d="M7 15a4 4 0 0 1-.6-7.95A5.5 5.5 0 0 1 17 6.5a3.8 3.8 0 0 1 .5 7.5H7z"/><path d="M13 15l-2.5 4h3L11 23"/>';
+  I.vent = '<path d="M3 8h10a2.5 2.5 0 1 0-2.5-2.5M3 12h14a3 3 0 1 1-3 3M3 16h8a2 2 0 1 1-2 2"/>';
+  I.maree = '<path d="M2 15c2.5-2.4 5-2.4 7.5 0s5 2.4 7.5 0 3.3-2 5 0"/><path d="M2 19c2.5-2.4 5-2.4 7.5 0s5 2.4 7.5 0 3.3-2 5 0" opacity=".55"/><path d="M12 4v7M9 8l3 3 3-3"/>';
+  I.coucher = '<path d="M17 16a5 5 0 0 0-10 0"/><path d="M3 16h18M12 7V4M5.6 9.6 4.2 8.2M18.4 9.6l1.4-1.4"/><path d="M8 20h8"/>';
   const ico = (n, cls) => `<svg class="${cls || 'ico'}" viewBox="0 0 24 24" aria-hidden="true">${I[n] || I.point}</svg>`;
 
   /* ---------- Liens ---------- */
@@ -144,6 +157,53 @@
     return `${ico('soleil')}<span>${esc(salut)}. ${txt}</span>`;
   }
 
+  /* ---------- Le ciel sur la baie (Open-Meteo, sans clé, mis en cache 30 min) ---------- */
+  const ICONE_CIEL = (code, nuit) => {
+    if (code <= 1) return nuit ? 'cielLune' : 'cielSoleil';
+    if (code === 2) return nuit ? 'cielVoile' : 'cielNuageSoleil';
+    if (code === 3) return 'cielNuage';
+    if (code === 45 || code === 48) return 'cielBrume';
+    if (code >= 71 && code <= 77 || code === 85 || code === 86) return 'cielNeige';
+    if (code >= 95) return 'cielOrage';
+    return 'cielPluie';
+  };
+  function rendreCiel(d) {
+    const el = $('#ciel'); if (!el) return;
+    const a = T().accueil, c = a.ciel, now = new Date(), { lat, lon } = CFG.coordonnees, s = soleil(now, lat, lon);
+    const nuit = now < s.lever || now > s.coucher;
+    const prochain = now < s.lever ? { l: c.lever, h: s.lever } : now < s.coucher ? { l: c.coucher, h: s.coucher } : { l: c.lever, h: soleil(new Date(now.getTime() + 864e5), lat, lon).lever };
+    let gauche = `<div class="ciel-meteo"><span class="ciel-ico">${ico(nuit ? 'cielLune' : 'cielSoleil')}</span><div><b class="ciel-deg salut">${esc(ligneSalut())}</b></div></div>`;
+    if (d && typeof d.t === 'number') {
+      const lib = (d.code <= 1 && nuit) ? c.nuit : (c.codes[d.code] || c.codes[3]);
+      gauche = `<div class="ciel-meteo"><span class="ciel-ico">${ico(ICONE_CIEL(d.code, nuit))}</span><div><b class="ciel-deg">${Math.round(d.t)}°</b><span class="ciel-lib">${esc(lib)}${d.vent >= 25 ? ` · ${esc(c.vent.replace('{v}', Math.round(d.vent)))}` : ''}</span></div></div>`;
+    }
+    el.innerHTML = `<span class="eyebrow">${esc(c.eyebrow)}</span>
+      <div class="ciel-corps">${gauche}
+        <div class="ciel-soleil">${ico('coucher')}<div><b>${heure(prochain.h)}</b><span>${esc(prochain.l)}</span></div></div>
+      </div>
+      <a class="ciel-marees lien-or" href="${esc(CFG.marees)}" target="_blank" rel="noopener">${ico('maree')}${esc(c.marees)}</a>`;
+    affiner(el);
+  }
+  function ligneSalut() {
+    const a = T().accueil, h = +new Intl.DateTimeFormat('fr-FR', { hour: 'numeric', hour12: false, timeZone: 'Europe/Paris' }).format(new Date());
+    return h < 12 && h >= 5 ? a.salut.matin : (h < 18 && h >= 12 ? a.salut.apresMidi : a.salut.soir);
+  }
+  let cielData = null;
+  function chargerCiel() {
+    const cache = store.get('fh-ciel', null);
+    if (cache && Date.now() - cache.t < 30 * 60000) { cielData = cache.d; rendreCiel(cielData); return; }
+    rendreCiel(cielData);
+    const { lat, lon } = CFG.coordonnees;
+    const u = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&timezone=Europe%2FParis`;
+    const ctl = ('AbortController' in window) ? new AbortController() : null;
+    if (ctl) setTimeout(() => ctl.abort(), 6000);
+    fetch(u, ctl ? { signal: ctl.signal } : {}).then((r) => r.ok ? r.json() : null).then((j) => {
+      if (!j || !j.current) return;
+      cielData = { t: j.current.temperature_2m, code: j.current.weather_code, vent: j.current.wind_speed_10m };
+      store.set('fh-ciel', { t: Date.now(), d: cielData }); rendreCiel(cielData);
+    }).catch(() => { });
+  }
+
   /* ---------- Toast, copie, vibration ---------- */
   let toastT;
   function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('visible'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('visible'), 2200); }
@@ -165,24 +225,36 @@
     const itin = CFG.adresse
       ? `<a class="action" href="${gmaps(CFG.adresse)}" target="_blank" rel="noopener"><span class="rond">${ico('car')}</span>${esc(a.rapides.itineraire)}</a>`
       : `<button type="button" class="action" data-action="partager"><span class="rond">${ico('share')}</span>${esc(a.rapides.partager)}</button>`;
-    const chapitres = a.sections.map((s, i) => `
-      <li class="r" style="transition-delay:${Math.min(i, 5) * 60}ms"><button type="button" class="chapitre" data-page="${s.id}">
-        <span class="vignette">${PHOTO[s.id] ? `<img src="img/${PHOTO[s.id]}-t.webp" alt="" loading="lazy" width="240" height="240">` : ico('alert')}</span>
-        <span><span class="num">${deux(i + 1)}</span><b>${esc(s.titre)}</b><small>${esc(s.sous)}</small></span>
-        ${ico('chevR', 'ico chev')}
-      </button></li>`).join('');
+    const u = t.urgences;
+    const tuiles = a.sections.map((s, i) => {
+      const large = i === 0, sombre = s.id === 'urgences';
+      const img = PHOTO[s.id] ? `<img src="img/${PHOTO[s.id]}${large ? '' : '-m'}.webp" alt="" loading="lazy" width="${large ? 1080 : 600}" height="${large ? 1320 : 750}">` : '';
+      const extra = sombre ? `<span class="tuile-chiffres">${u.liste.slice(0, 3).map((x) => esc(x.n)).join('<i>·</i>')}</span>` : '';
+      return `<li class="tuile r${large ? ' large' : ''}${sombre ? ' sombre' : ''}" style="transition-delay:${Math.min(i, 6) * 70}ms">
+        <button type="button" data-page="${s.id}" aria-label="${esc(s.titre)}">
+          <span class="tuile-img">${img}</span>
+          <span class="tuile-num">${deux(i + 1)}</span>
+          ${extra}
+          <span class="tuile-texte"><b>${esc(s.titre)}</b><small>${esc(sombre ? a.urgenceMini : s.sous)}</small></span>
+        </button></li>`;
+    }).join('');
     $('#accueil').innerHTML = `
       <section class="vitrine">
-        <div class="arche" id="arche">
-          ${HERO.map((h, i) => `<div class="arche-img${i === 0 ? ' actif' : ''}"><img src="img/${h}.webp" alt="" width="1080" height="1350" ${i ? 'loading="lazy"' : 'fetchpriority="high"'}></div>`).join('')}
+        <div class="arche-bloc">
+          <div class="arche" id="arche">
+            ${HERO.map((h, i) => `<div class="arche-img${i === 0 ? ' actif' : ''}"><img src="img/${h}.webp" alt="" width="1080" height="1350" ${i ? 'loading="lazy"' : 'fetchpriority="high"'}></div>`).join('')}
+          </div>
+          <svg class="arche-trait" viewBox="0 0 400 500" preserveAspectRatio="none" aria-hidden="true"><path d="M10 478q0 12 12 12h356q12 0 12-12V200A190 190 0 0 0 10 200Z" vector-effect="non-scaling-stroke"/></svg>
+          <span class="sceau" aria-hidden="true"><i></i><b>FH</b></span>
         </div>
         <div class="arche-index" aria-hidden="true">${HERO.map((h, i) => `<i${i === 0 ? ' class="actif"' : ''}></i>`).join('')}</div>
         <p class="sur">${esc(a.sur)}</p>
         <h1 class="mot" aria-label="Fun House">${lettres}</h1>
         <p class="sous">${esc(a.sousTitre)}</p>
         <p class="lieu-mini">${esc(a.lieu)}</p>
-        <p class="soleil" id="soleil">${ligneSoleil()}</p>
       </section>
+
+      <section class="ciel r" id="ciel" aria-live="polite"></section>
 
       <a class="sejour r" href="#/arrivee">
         <div><span class="lab">${esc(a.sejour.arrivee)}</span><b>${hh(CFG.arrivee)}</b><small>${esc(a.sejour.aPartir)} ${hh(CFG.arrivee)}</small></div>
@@ -200,7 +272,7 @@
 
       <section class="sommaire">
         <div class="sommaire-tete r"><span class="eyebrow">${esc(a.sommaire.eyebrow)}</span><h2 class="titre">${esc(a.sommaire.titre)} <em>${esc(a.sommaire.titreIt)}</em></h2></div>
-        <ul class="chapitres">${chapitres}</ul>
+        <ul class="mosaique">${tuiles}</ul>
       </section>
 
       <footer class="pied r">
@@ -214,7 +286,26 @@
         ${standalone ? '' : `<div class="installer">${ico('install')}<div><b>${esc(a.pied.installer)}</b>${esc(isIOS ? a.pied.installerAide : a.pied.installerAideAndroid)}</div></div>`}
       </footer>`;
     $$('.langues button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+    rendreFlottant();
     demarrerArche();
+    chargerCiel();
+  }
+
+  /* ---------- Barre flottante : wifi, appeler, message, quand les actions sont hors de vue ---------- */
+  let flottantIO = null;
+  function rendreFlottant() {
+    const a = T().accueil, c = CFG.contact;
+    let f = $('#flottant');
+    if (!f) { f = document.createElement('nav'); f.id = 'flottant'; f.className = 'flottant'; document.body.appendChild(f); }
+    f.setAttribute('aria-label', a.sommaire.eyebrow);
+    f.innerHTML = `<button type="button" data-page="wifi">${ico('wifi')}<span>${esc(a.flottant.wifi)}</span></button>
+      <a href="${tel(c.telIntl)}">${ico('phone')}<span>${esc(a.flottant.appeler)}</span></a>
+      <a href="${sms(c.telIntl, CFG.smsDemande[lang])}">${ico('sms')}<span>${esc(a.flottant.message)}</span></a>`;
+    if (flottantIO) flottantIO.disconnect();
+    const cible = $('#accueil .actions');
+    if (!cible || !('IntersectionObserver' in window)) return;
+    flottantIO = new IntersectionObserver((es) => { const e = es[0]; f.classList.toggle('visible', !e.isIntersecting && e.boundingClientRect.top < 0); }, { threshold: 0 });
+    flottantIO.observe(cible);
   }
 
   /* ---------- Diaporama de l'arche ---------- */
@@ -240,12 +331,13 @@
     return `<section class="page" id="page-${id}" aria-hidden="true" data-id="${id}">
       <header class="page-tete"><button type="button" class="retour" aria-label="${esc(T().commun.retour)}">${ico('chevL')}</button><div class="fil">${esc(titreCourt)}</div></header>
       <div class="page-corps">
-        ${photo ? `<figure class="page-photo" style="margin:0"><img src="img/${photo}.webp" alt="" width="1080" height="1320" loading="lazy"></figure>` : ''}
+        ${photo ? `<figure class="page-photo" style="margin:0"><img src="img/${photo}.webp" alt="" width="1080" height="1320" loading="lazy"><span class="page-voile"></span></figure>` : ''}
         ${corps(photo)}
       </div></section>`;
   }
   const numero = (id) => { const i = T().accueil.sections.findIndex((s) => s.id === id); return i < 0 ? '' : deux(i + 1); };
   const entete = (id, eb, t1, t2, photo) => `<div class="page-titre${photo ? '' : ' sans-photo'}">
+      <span class="filigrane" aria-hidden="true">${esc(numero(id))}</span>
       <p class="num"><span class="n"><span class="vh">${esc(T().commun.chapitre)} </span>${esc(numero(id))}</span><span class="trait" aria-hidden="true"></span><span class="eb">${esc(eb)}</span></p>
       <h1 class="titre">${esc(t1)} <em>${esc(t2)}</em></h1></div>`;
   const liensLieu = (q) => `<div class="liens"><a class="lien-or" href="${gmaps(q)}" target="_blank" rel="noopener">${ico('car')}${esc(T().commun.itineraire)}</a>${isIOS ? `<a class="lien-or" href="${amaps(q)}" target="_blank" rel="noopener">${ico('pin')}${esc(T().commun.plans)}</a>` : ''}</div>`;
@@ -419,6 +511,8 @@
     const id = m ? m[1] : null, cible = id ? $(`#page-${id}`) : null;
     if (courante && courante !== cible) { courante.classList.remove('ouverte'); courante.setAttribute('aria-hidden', 'true'); courante = null; }
     if (cible) {
+      const img = $('.page-photo img', cible); if (img) img.style.transform = '';
+      $$('.page-tete', cible).forEach((h) => h.classList.remove('compact'));
       cible.classList.add('ouverte'); cible.setAttribute('aria-hidden', 'false'); courante = cible;
       document.body.classList.add('page-ouverte');
       $$('.r', cible).forEach((el) => io ? io.observe(el) : el.classList.add('vu'));
@@ -501,7 +595,7 @@
   document.addEventListener('click', (e) => {
     const a = e.target.closest('[data-page],[data-action],[data-copier],[data-photo],[data-onglet],[data-lang],.retour,.check');
     if (!a) return;
-    if (a.dataset.page) { e.preventDefault(); ouvrir(a.dataset.page); return; }
+    if (a.dataset.page) { e.preventDefault(); vibre(); ouvrir(a.dataset.page); return; }
     if (a.dataset.lang) { if (a.dataset.lang !== lang) { lang = a.dataset.lang; store.set('fh-lang', lang); rendre(); document.body.classList.add('revele'); } return; }
     if (a.classList.contains('retour')) { fermer(); return; }
     if (a.dataset.copier != null) { copier(a.dataset.copier); return; }
@@ -520,8 +614,15 @@
     if (a.dataset.action === 'reinit') { store.set('fh-check', []); restaurerChecklist(); return; }
   });
   window.addEventListener('hashchange', route);
+  /* Parallaxe douce de l'arche quand on fait défiler l'accueil */
+  let ticA = false;
+  window.addEventListener('scroll', () => {
+    if (ticA || reduce) return; ticA = true;
+    requestAnimationFrame(() => { ticA = false; const y = Math.min(window.scrollY, 700); const a = $('#arche'); if (a) a.style.transform = `translate3d(0, ${(y * 0.18).toFixed(1)}px, 0)`; });
+  }, { passive: true });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (lightbox.classList.contains('ouverte')) fermerLightbox(); else if (courante) fermer(); } });
-  setInterval(() => { const s = $('#soleil'); if (s) s.innerHTML = ligneSoleil(); }, 60000);
+  setInterval(() => { if ($('#ciel')) rendreCiel(cielData); }, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && $('#ciel')) chargerCiel(); });
 
   /* ---------- Ouverture : la clé trace, tourne, les portes s'ouvrent ---------- */
   const ouv = $('#ouverture');

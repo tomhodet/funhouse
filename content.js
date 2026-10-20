@@ -52,7 +52,8 @@ window.FH_CONFIG = {
   "coordonnees": {
     "lat": 48.5786,
     "lon": -1.4898
-  }
+  },
+  "marees": "https://marine.meteoconsult.fr/meteo-marine/horaires-maree-mont-saint-michel-950-0.php"
 };
 
 window.FH_CONTENT = {
@@ -149,6 +150,50 @@ window.FH_CONTENT = {
         "installer": "Garder le livret sur votre téléphone",
         "installerAide": "Dans Safari : bouton Partager, puis « Sur l'écran d'accueil ».",
         "installerAideAndroid": "Dans le menu du navigateur : « Ajouter à l'écran d'accueil »."
+      },
+      "ciel": {
+        "eyebrow": "En ce moment sur la baie",
+        "nuit": "Nuit claire",
+        "vent": "Vent {v} km/h",
+        "marees": "Horaires des marées",
+        "coucher": "Coucher du soleil",
+        "lever": "Lever du soleil",
+        "codes": {
+          "0": "Ciel dégagé",
+          "1": "Plutôt dégagé",
+          "2": "Quelques nuages",
+          "3": "Ciel couvert",
+          "45": "Brouillard",
+          "48": "Brouillard givrant",
+          "51": "Bruine légère",
+          "53": "Bruine",
+          "55": "Bruine dense",
+          "56": "Bruine verglaçante",
+          "57": "Bruine verglaçante",
+          "61": "Pluie faible",
+          "63": "Pluie",
+          "65": "Pluie forte",
+          "66": "Pluie verglaçante",
+          "67": "Pluie verglaçante",
+          "71": "Neige faible",
+          "73": "Neige",
+          "75": "Neige forte",
+          "77": "Grésil",
+          "80": "Averses",
+          "81": "Averses",
+          "82": "Fortes averses",
+          "85": "Averses de neige",
+          "86": "Averses de neige",
+          "95": "Orage",
+          "96": "Orage et grêle",
+          "99": "Orage et grêle"
+        }
+      },
+      "urgenceMini": "Appel direct",
+      "flottant": {
+        "wifi": "Wifi",
+        "appeler": "Appeler",
+        "message": "Message"
       }
     },
     "commun": {
@@ -920,6 +965,50 @@ window.FH_CONTENT = {
         "installer": "Keep the guide on your phone",
         "installerAide": "In Safari: tap Share, then “Add to Home Screen”.",
         "installerAideAndroid": "In the browser menu: “Add to Home screen”."
+      },
+      "ciel": {
+        "eyebrow": "Right now over the bay",
+        "nuit": "Clear night",
+        "vent": "Wind {v} km/h",
+        "marees": "Tide times",
+        "coucher": "Sunset",
+        "lever": "Sunrise",
+        "codes": {
+          "0": "Clear sky",
+          "1": "Mostly clear",
+          "2": "Some clouds",
+          "3": "Overcast",
+          "45": "Fog",
+          "48": "Freezing fog",
+          "51": "Light drizzle",
+          "53": "Drizzle",
+          "55": "Heavy drizzle",
+          "56": "Freezing drizzle",
+          "57": "Freezing drizzle",
+          "61": "Light rain",
+          "63": "Rain",
+          "65": "Heavy rain",
+          "66": "Freezing rain",
+          "67": "Freezing rain",
+          "71": "Light snow",
+          "73": "Snow",
+          "75": "Heavy snow",
+          "77": "Sleet",
+          "80": "Showers",
+          "81": "Showers",
+          "82": "Heavy showers",
+          "85": "Snow showers",
+          "86": "Snow showers",
+          "95": "Thunderstorm",
+          "96": "Thunder and hail",
+          "99": "Thunder and hail"
+        }
+      },
+      "urgenceMini": "One-tap call",
+      "flottant": {
+        "wifi": "Wifi",
+        "appeler": "Call",
+        "message": "Text"
       }
     },
     "commun": {
