@@ -90,7 +90,7 @@
   I.cielNeige = '<path d="M7 15a4 4 0 0 1-.6-7.95A5.5 5.5 0 0 1 17 6.5a3.8 3.8 0 0 1 .5 7.5H7z"/><path d="M8 19h.01M12 21h.01M16 19h.01M10 22h.01M14 23h.01" stroke-width="2.2"/>';
   I.cielOrage = '<path d="M7 15a4 4 0 0 1-.6-7.95A5.5 5.5 0 0 1 17 6.5a3.8 3.8 0 0 1 .5 7.5H7z"/><path d="M13 15l-2.5 4h3L11 23"/>';
   I.vent = '<path d="M3 8h10a2.5 2.5 0 1 0-2.5-2.5M3 12h14a3 3 0 1 1-3 3M3 16h8a2 2 0 1 1-2 2"/>';
-  I.maree = '<path d="M2 15c2.5-2.4 5-2.4 7.5 0s5 2.4 7.5 0 3.3-2 5 0"/><path d="M2 19c2.5-2.4 5-2.4 7.5 0s5 2.4 7.5 0 3.3-2 5 0" opacity=".55"/><path d="M12 4v7M9 8l3 3 3-3"/>';
+  I.maree = '<path d="M2 16c2.5-2.4 5-2.4 7.5 0s5 2.4 7.5 0 3.3-2 5 0"/><path d="M2 20.5c2.5-2.4 5-2.4 7.5 0s5 2.4 7.5 0 3.3-2 5 0" opacity=".55"/><path d="M14.6 3.6a4.6 4.6 0 1 0 4.6 6.7 3.7 3.7 0 0 1-4.6-6.7z"/>';
   I.coucher = '<path d="M17 16a5 5 0 0 0-10 0"/><path d="M3 16h18M12 7V4M5.6 9.6 4.2 8.2M18.4 9.6l1.4-1.4"/><path d="M8 20h8"/>';
   const ico = (n, cls) => `<svg class="${cls || 'ico'}" viewBox="0 0 24 24" aria-hidden="true">${I[n] || I.point}</svg>`;
 
@@ -145,54 +145,150 @@
     return { lever: deJul(Jnoon - (Jset - Jnoon)), coucher: deJul(Jset) };
   }
   if (typeof module !== 'undefined') module.exports = soleil;
-  function ligneSoleil() {
-    const a = T().accueil, now = new Date(), { lat, lon } = CFG.coordonnees;
-    const h = +new Intl.DateTimeFormat('fr-FR', { hour: 'numeric', hour12: false, timeZone: 'Europe/Paris' }).format(now);
-    const salut = h < 12 && h >= 5 ? a.salut.matin : (h < 18 && h >= 12 ? a.salut.apresMidi : a.salut.soir);
-    const auj = soleil(now, lat, lon);
-    let txt;
-    if (now < auj.lever) txt = a.soleil.leverMatin.replace('{h}', `<b>${heure(auj.lever)}</b>`);
-    else if (now < auj.coucher) txt = a.soleil.coucher.replace('{h}', `<b>${heure(auj.coucher)}</b>`);
-    else txt = a.soleil.lever.replace('{h}', `<b>${heure(soleil(new Date(now.getTime() + 864e5), lat, lon).lever)}</b>`);
-    return `${ico('soleil')}<span>${esc(salut)}. ${txt}</span>`;
+
+  /* ---------- La baie : illustration vivante de l'arche (soleil réel, lune réelle, météo réelle) ---------- */
+  const MONT = 'M96 500L96 452L104 446L112 446L118 440L132 440L136 446L156 444L164 426L196 418L214 412L226 396L238 372L252 344L262 312L272 286L290 272L320 262L338 250L382 244L384 214L398 206L444 200L452 186L460 172L470 128L475 84L478 36L481 84L486 128L494 168L500 176L522 178L542 190L556 202L560 214L604 220L640 224L652 234L656 296L680 314L716 334L752 356L786 372L802 392L832 404L852 426L884 440L904 466L904 500Z';
+  const FENETRES = [[420, 226], [452, 222], [512, 214], [596, 238], [612, 262], [350, 272], [300, 304], [560, 300], [700, 350], [250, 362], [760, 384], [404, 330], [480, 298], [640, 332], [206, 424], [818, 418], [520, 382], [330, 404], [604, 412], [452, 432]];
+  function posSoleil(date, lat, lon) {
+    const rad = Math.PI / 180, d = date.valueOf() / 864e5 - 0.5 + 2440588 - 2451545;
+    const M = rad * (357.5291 + 0.98560028 * d);
+    const L = M + rad * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M)) + rad * 102.9372 + Math.PI;
+    const e = rad * 23.4397, dec = Math.asin(Math.sin(e) * Math.sin(L)), ra = Math.atan2(Math.sin(L) * Math.cos(e), Math.cos(L));
+    const H = rad * (280.16 + 360.9856235 * d) - rad * -lon - ra, phi = rad * lat;
+    return Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H)) / rad;
+  }
+  /* Hauteur et angle horaire de la lune (formules simplifiées de SunCalc, précision de l'ordre du degré) */
+  function posLune(date, lat, lon) {
+    const rad = Math.PI / 180, d = date.valueOf() / 864e5 - 0.5 + 2440588 - 2451545;
+    const L = rad * (218.316 + 13.176396 * d), M = rad * (134.963 + 13.064993 * d), F = rad * (93.272 + 13.229350 * d);
+    const l = L + rad * 6.289 * Math.sin(M), b = rad * 5.128 * Math.sin(F), e = rad * 23.4397;
+    const ra = Math.atan2(Math.sin(l) * Math.cos(e) - Math.tan(b) * Math.sin(e), Math.cos(l));
+    const dec = Math.asin(Math.sin(b) * Math.cos(e) + Math.cos(b) * Math.sin(e) * Math.sin(l));
+    let H = rad * (280.16 + 360.9856235 * d) - rad * -lon - ra; H = Math.atan2(Math.sin(H), Math.cos(H));
+    const phi = rad * lat;
+    return { alt: Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H)) / rad, H };
+  }
+  /* 0 = nouvelle lune, 0,5 = pleine lune (référence : nouvelle lune du 6 janvier 2000, 18 h 14 UTC) */
+  function phaseLune(date) { const p = ((date.valueOf() / 864e5 - 10962.7597) / 29.530588853) % 1; return p < 0 ? p + 1 : p; }
+  function lune(cx, cy, r, p) {
+    const croissant = p < 0.5, k = Math.cos(2 * Math.PI * p), rx = Math.abs(k) * r;
+    const s1 = croissant ? 1 : 0, s2 = croissant ? (k > 0 ? 0 : 1) : (k > 0 ? 1 : 0);
+    return `M${cx} ${cy - r}A${r} ${r} 0 0 ${s1} ${cx} ${cy + r}A${rx.toFixed(2)} ${r} 0 0 ${s2} ${cx} ${cy - r}Z`;
+  }
+  function etatCiel(now, meteo) {
+    const { lat, lon } = CFG.coordonnees, s = soleil(now, lat, lon), alt = posSoleil(now, lat, lon);
+    const jour = now >= s.lever && now <= s.coucher;
+    const t = jour ? (now - s.lever) / (s.coucher - s.lever) : 0;
+    const code = meteo && typeof meteo.code === 'number' ? meteo.code : null;
+    const ml = posLune(now, lat, lon);
+    return { jour, t, alt, dore: jour && alt < 9, crepuscule: !jour && alt > -9, soir: now > s.coucher, code, phase: phaseLune(now), lune: ml };
+  }
+  let sceneN = 0;
+  const astre = (e) => ({ x: 348 - e.t * 296, y: 318 - Math.max(e.alt, -4) / 62 * 250 });
+  /* Quatre calques superposés : le ciel et la terre sont fixes (peints une fois),
+     les astres et la surface de l'eau sont animés dans leurs propres calques. */
+  function scene(e) {
+    const H = 318, W = 400, c = e.code, u = 'b' + (++sceneN);
+    const pluie = c != null && ((c >= 51 && c <= 67) || (c >= 80 && c <= 82) || c >= 95);
+    const neige = c != null && ((c >= 71 && c <= 77) || c === 85 || c === 86);
+    const brume = c === 45 || c === 48, couvert = c === 3 || pluie || neige, nuages = c === 2 || couvert;
+    const nuit = !e.jour, dusk = nuit && e.crepuscule && !couvert && !brume, dore = e.dore && !couvert && !brume;
+    const ciel = dusk ? ['#DDD6CC', '#E6D7C2', '#E9C79B'] : nuit ? ['#D3CEC5', '#DDD7CC', '#E8E1D4'] : dore ? ['#FAF3E6', '#F4DFBC', '#EBC48C'] : couvert ? ['#F0EDE6', '#ECE8E0', '#E7E1D5'] : ['#FBF9F4', '#F6F0E4', '#EFE4D0'];
+    const eau = dusk ? ['#EBDCC4', '#DDD2C0'] : nuit ? ['#E0D9CC', '#D6CEBF'] : dore ? ['#EFDCBC', '#E6D3B4'] : ['#ECE3D2', '#E3D7C2'];
+    const { x: sx, y: sy } = astre(e), sr = dore ? 21 : 17;
+    const soleilVisible = e.jour && !couvert && !brume;
+    const montCx = 172, montS = 0.235, place = `translate(${montCx} ${H}) scale(${montS}) translate(-500 -500)`;
+    const mod = `${nuit ? ' nuit' : ''}${dore ? ' dore' : ''}`;
+    const luneVisible = nuit && !couvert && !brume && e.lune && e.lune.alt > 0 && e.phase > 0.04 && e.phase < 0.96;
+    const lx = luneVisible ? Math.round(Math.min(360, Math.max(40, 250 - e.lune.H / Math.PI * 300))) : 0;
+    const ly = luneVisible ? Math.round(Math.max(64, H - 40 - e.lune.alt / 60 * 230)) : 0;
+    const svg = (cls, inner) => `<svg class="baie ${cls}${mod}" viewBox="0 0 ${W} 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">${inner}</svg>`;
+    const etoiles = nuit ? [[52, 70], [96, 128], [138, 52], [214, 88], [262, 46], [318, 158], [352, 92], [70, 178], [236, 162], [182, 128], [120, 210], [292, 214], [158, 96], [372, 182]]
+      .slice(0, dusk ? 6 : 14)
+      .map(([x, y], i) => `<circle class="etoile" cx="${x}" cy="${y}" r="${i % 3 ? 0.9 : 1.4}" style="animation-delay:${((i * 0.37) % 3).toFixed(2)}s"/>`).join('') : '';
+    const eclats = (soleilVisible && e.alt < 24) ? Array.from({ length: 9 }, (_, i) => {
+      const y = H + 7 + i * i * 1.6 + i * 3, w = 26 - i * 1.8 + (i % 2) * 6;
+      return `<line class="eclat" x1="${(sx - w / 2).toFixed(1)}" x2="${(sx + w / 2).toFixed(1)}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" style="animation-delay:${(i * 0.23).toFixed(2)}s"/>`;
+    }).join('') : '';
+    const NUEES = [[34, 104, 96, 138], [232, 150, 70, 104], [96, 196, 60, 92], [262, 76, 84, 120], [20, 232, 56, 84]];
+    const lesNuages = nuages ? NUEES.slice(0, couvert ? 5 : 2).map(([x, y, a, b], i) =>
+      `<g class="nuage n${i % 3}"><line x1="${x}" x2="${x + a}" y1="${y}" y2="${y}"/><line x1="${x + 22}" x2="${x + b}" y1="${y + 8}" y2="${y + 8}"/></g>`).join('') : '';
+    const fenetres = nuit ? FENETRES.map(([x, y], i) => `<circle class="fenetre" cx="${x}" cy="${y}" r="5" style="animation-delay:${((i * 0.53) % 4).toFixed(2)}s"/>`).join('') : '';
+
+    const l1 = svg('l-ciel', `<defs>
+        <linearGradient id="${u}Ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ciel[0]}"/><stop offset=".58" stop-color="${ciel[1]}"/><stop offset="1" stop-color="${ciel[2]}"/></linearGradient>
+        <radialGradient id="${u}Couchant" cx=".5" cy="1" r=".9"><stop offset="0" stop-color="#E9B877" stop-opacity=".55"/><stop offset="1" stop-color="#E9B877" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="${W}" height="${H + 2}" fill="url(#${u}Ciel)"/>
+      ${dore ? `<ellipse cx="${sx.toFixed(1)}" cy="${H}" rx="260" ry="120" fill="url(#${u}Couchant)"/>` : ''}
+      ${dusk ? `<ellipse cx="${e.soir ? 70 : 330}" cy="${H}" rx="240" ry="90" fill="url(#${u}Couchant)" opacity=".8"/>` : ''}`);
+
+    const l2 = svg('l-astres', `<defs>
+        <radialGradient id="${u}Halo"><stop offset="0" stop-color="#E9C98F" stop-opacity=".75"/><stop offset=".45" stop-color="#E9C98F" stop-opacity=".22"/><stop offset="1" stop-color="#E9C98F" stop-opacity="0"/></radialGradient>
+        <radialGradient id="${u}Disque" cx=".38" cy=".35"><stop offset="0" stop-color="#F3DDAE"/><stop offset="1" stop-color="${dore ? '#C08A47' : '#CFA468'}"/></radialGradient>
+        <radialGradient id="${u}LueurA"><stop offset="0" stop-color="#E7C487" stop-opacity=".75"/><stop offset="1" stop-color="#E7C487" stop-opacity="0"/></radialGradient>
+        <clipPath id="${u}AuDessus"><rect x="0" y="0" width="${W}" height="${H}"/></clipPath>
+      </defs>
+      ${etoiles}
+      ${luneVisible ? `<g class="lune-g"><circle cx="${lx}" cy="${ly}" r="36" fill="url(#${u}LueurA)" opacity=".5"/><circle cx="${lx}" cy="${ly}" r="12" fill="#D9BE93" opacity=".18"/><path class="lune" d="${lune(lx, ly, 12, e.phase)}"/></g>` : ''}
+      ${soleilVisible ? `<g class="astre" clip-path="url(#${u}AuDessus)"><circle class="halo" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${(sr * 3.6).toFixed(1)}" fill="url(#${u}Halo)"/><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${sr}" fill="url(#${u}Disque)"/></g>` : ''}
+      ${(e.jour && couvert && !brume) ? `<g class="astre" clip-path="url(#${u}AuDessus)"><circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${(sr * 2.6).toFixed(1)}" fill="url(#${u}Halo)" opacity=".4"/></g>` : ''}
+      <g class="nuages">${lesNuages}</g>
+      ${e.jour && !pluie && !neige && !brume ? `<g class="mouettes"><path d="M0 0q4.5-4.5 9 0q4.5-4.5 9 0"/><path d="M26 10q3.5-3.5 7 0q3.5-3.5 7 0"/></g>` : ''}`);
+
+    const l3 = svg('l-terre', `<defs>
+        <linearGradient id="${u}Eau" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${eau[0]}"/><stop offset="1" stop-color="${eau[1]}"/></linearGradient>
+        <linearGradient id="${u}Bande" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBF9F4" stop-opacity="0"/><stop offset=".5" stop-color="#FBF9F4" stop-opacity=".7"/><stop offset="1" stop-color="#FBF9F4" stop-opacity="0"/></linearGradient>
+        <radialGradient id="${u}LueurB"><stop offset="0" stop-color="#E7C487" stop-opacity=".75"/><stop offset="1" stop-color="#E7C487" stop-opacity="0"/></radialGradient>
+        <linearGradient id="${u}Mont" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${nuit ? '#21374A' : '#46596A'}"/><stop offset="1" stop-color="${nuit ? '#2E4452' : '#6A7C86'}"/></linearGradient>
+        <linearGradient id="${u}Fondu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+        <mask id="${u}Masque" maskUnits="userSpaceOnUse" x="0" y="${H}" width="${W}" height="${500 - H}"><rect x="0" y="${H}" width="${W}" height="120" fill="url(#${u}Fondu)"/></mask>
+        <filter id="${u}Ondes" x="-10%" y="-5%" width="120%" height="130%"><feTurbulence type="fractalNoise" baseFrequency=".008 .16" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="11" xChannelSelector="R" yChannelSelector="G"/></filter>
+      </defs>
+      ${nuit ? `<circle cx="${montCx}" cy="${H - 46}" r="96" fill="url(#${u}LueurB)" opacity=".7"/>` : ''}
+      <rect x="0" y="${H - 16}" width="${W}" height="22" fill="url(#${u}Bande)" opacity="${nuit ? 0.35 : 0.8}"/>
+      <g class="mont-g"><g style="opacity:${brume ? 0.55 : 1}"><path d="${MONT}" fill="url(#${u}Mont)" transform="${place}"/>${nuit ? `<path d="${MONT}" fill="none" stroke="#E2C48F" stroke-width="2.4" stroke-opacity=".7" stroke-linejoin="round" transform="${place}"/>` : ''}</g></g>
+      <rect y="${H}" width="${W}" height="${500 - H}" fill="url(#${u}Eau)"/>
+      <g class="reflet-r" mask="url(#${u}Masque)"><g filter="url(#${u}Ondes)" opacity="${nuit ? 0.42 : brume ? 0.08 : 0.2}"><path d="${MONT}" fill="${nuit ? '#D6B076' : '#55697A'}" transform="translate(0 ${2 * H}) scale(1 -1) ${place}"/></g></g>
+      <line class="horizon" x1="0" x2="${W}" y1="${H}" y2="${H}"/>`);
+
+    const l4 = svg('l-surface', `<defs>
+        <radialGradient id="${u}Nappe"><stop offset="0" stop-color="#FBF9F4" stop-opacity=".92"/><stop offset=".55" stop-color="#FBF9F4" stop-opacity=".6"/><stop offset="1" stop-color="#FBF9F4" stop-opacity="0"/></radialGradient>
+        <pattern id="${u}Pluie" width="11" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(14)"><line x1="5" y1="0" x2="5" y2="7" stroke="#6F7F88" stroke-width=".8" stroke-linecap="round"/><animateTransform attributeName="patternTransform" type="translate" from="0 0" to="0 16" dur=".55s" repeatCount="indefinite" additive="sum"/></pattern>
+        <pattern id="${u}Neige" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="5" cy="6" r="1.1" fill="#FBF9F4"/><circle cx="16" cy="15" r=".8" fill="#FBF9F4"/><animateTransform attributeName="patternTransform" type="translate" from="0 0" to="4 22" dur="3.2s" repeatCount="indefinite"/></pattern>
+      </defs>
+      ${nuit ? `<g class="mont-g"><g fill="#F0D59F" transform="${place}">${fenetres}</g></g>` : ''}
+      <g class="eclats">${eclats}</g>
+      <g class="chenaux">
+        <path d="M-10 352C60 344 92 362 150 358S262 340 330 350 410 346 420 344"/>
+        <path d="M-10 384C40 378 120 396 190 388S300 372 420 386"/>
+        <path d="M30 430C90 418 150 440 214 428S320 410 410 424"/>
+        <path d="M-10 470C80 458 160 478 250 466S360 452 420 460"/>
+      </g>
+      ${brume ? `<g class="brume"><ellipse cx="120" cy="${H - 40}" rx="230" ry="30" fill="url(#${u}Nappe)"/><ellipse cx="300" cy="${H - 6}" rx="250" ry="26" fill="url(#${u}Nappe)"/><ellipse cx="160" cy="${H + 30}" rx="270" ry="30" fill="url(#${u}Nappe)"/></g>` : ''}
+      ${pluie ? `<rect class="pluie" width="${W}" height="500" fill="url(#${u}Pluie)"/>` : ''}
+      ${neige ? `<rect class="neige" width="${W}" height="500" fill="url(#${u}Neige)"/>` : ''}`);
+    return l1 + l2 + l3 + l4;
   }
 
-  /* ---------- Le ciel sur la baie (Open-Meteo, sans clé, mis en cache 30 min) ---------- */
+  /* ---------- Heure et météo (Open-Meteo, sans clé, mis en cache 30 min) ---------- */
+  const demo = (() => { try { if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return {}; const q = new URLSearchParams(location.search); return { h: q.get('h'), m: q.get('m') }; } catch (e) { return {}; } })();
+  const maintenant = () => demo.h ? new Date(demo.h) : new Date();
   const ICONE_CIEL = (code, nuit) => {
     if (code <= 1) return nuit ? 'cielLune' : 'cielSoleil';
     if (code === 2) return nuit ? 'cielVoile' : 'cielNuageSoleil';
     if (code === 3) return 'cielNuage';
     if (code === 45 || code === 48) return 'cielBrume';
-    if (code >= 71 && code <= 77 || code === 85 || code === 86) return 'cielNeige';
+    if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'cielNeige';
     if (code >= 95) return 'cielOrage';
     return 'cielPluie';
   };
-  function rendreCiel(d) {
-    const el = $('#ciel'); if (!el) return;
-    const a = T().accueil, c = a.ciel, now = new Date(), { lat, lon } = CFG.coordonnees, s = soleil(now, lat, lon);
-    const nuit = now < s.lever || now > s.coucher;
-    const prochain = now < s.lever ? { l: c.lever, h: s.lever } : now < s.coucher ? { l: c.coucher, h: s.coucher } : { l: c.lever, h: soleil(new Date(now.getTime() + 864e5), lat, lon).lever };
-    let gauche = `<div class="ciel-meteo"><span class="ciel-ico">${ico(nuit ? 'cielLune' : 'cielSoleil')}</span><div><b class="ciel-deg salut">${esc(ligneSalut())}</b></div></div>`;
-    if (d && typeof d.t === 'number') {
-      const lib = (d.code <= 1 && nuit) ? c.nuit : (c.codes[d.code] || c.codes[3]);
-      gauche = `<div class="ciel-meteo"><span class="ciel-ico">${ico(ICONE_CIEL(d.code, nuit))}</span><div><b class="ciel-deg">${Math.round(d.t)}°</b><span class="ciel-lib">${esc(lib)}${d.vent >= 25 ? ` · ${esc(c.vent.replace('{v}', Math.round(d.vent)))}` : ''}</span></div></div>`;
-    }
-    el.innerHTML = `<span class="eyebrow">${esc(c.eyebrow)}</span>
-      <div class="ciel-corps">${gauche}
-        <div class="ciel-soleil">${ico('coucher')}<div><b>${heure(prochain.h)}</b><span>${esc(prochain.l)}</span></div></div>
-      </div>
-      <a class="ciel-marees lien-or" href="${esc(CFG.marees)}" target="_blank" rel="noopener">${ico('maree')}${esc(c.marees)}</a>`;
-    affiner(el);
-  }
-  function ligneSalut() {
-    const a = T().accueil, h = +new Intl.DateTimeFormat('fr-FR', { hour: 'numeric', hour12: false, timeZone: 'Europe/Paris' }).format(new Date());
-    return h < 12 && h >= 5 ? a.salut.matin : (h < 18 && h >= 12 ? a.salut.apresMidi : a.salut.soir);
-  }
   let cielData = null;
   function chargerCiel() {
+    if (demo.m != null && demo.m !== '') { cielData = { t: 12, code: +demo.m }; majCiel(); return; }
     const cache = store.get('fh-ciel', null);
-    if (cache && Date.now() - cache.t < 30 * 60000) { cielData = cache.d; rendreCiel(cielData); return; }
-    rendreCiel(cielData);
+    if (cache && Date.now() - cache.t < 30 * 60000) { cielData = cache.d; majCiel(); return; }
+    majCiel();
     const { lat, lon } = CFG.coordonnees;
     const u = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m&timezone=Europe%2FParis`;
     const ctl = ('AbortController' in window) ? new AbortController() : null;
@@ -200,8 +296,32 @@
     fetch(u, ctl ? { signal: ctl.signal } : {}).then((r) => r.ok ? r.json() : null).then((j) => {
       if (!j || !j.current) return;
       cielData = { t: j.current.temperature_2m, code: j.current.weather_code, vent: j.current.wind_speed_10m };
-      store.set('fh-ciel', { t: Date.now(), d: cielData }); rendreCiel(cielData);
+      store.set('fh-ciel', { t: Date.now(), d: cielData }); majCiel();
     }).catch(() => { });
+  }
+  function majCiel() { majBaie(); majDirect(); }
+  let baieCle = '';
+  function majBaie() {
+    const el = $('#baie'); if (!el) return;
+    const e = etatCiel(maintenant(), cielData), cle = [e.jour, e.dore, e.code].join('|');
+    if (cle !== baieCle || !el.firstElementChild) { el.innerHTML = scene(e); baieCle = cle; return; }
+    const p = astre(e);
+    $$('.astre circle', el).forEach((ci) => { ci.setAttribute('cx', p.x.toFixed(1)); ci.setAttribute('cy', p.y.toFixed(1)); });
+  }
+  function majDirect() {
+    const el = $('#direct'); if (!el) return;
+    const c = T().accueil.ciel, now = maintenant(), { lat, lon } = CFG.coordonnees, s = soleil(now, lat, lon);
+    const nuit = now < s.lever || now > s.coucher;
+    const [modele, h] = now < s.lever ? [c.leverA, s.lever] : now < s.coucher ? [c.coucherA, s.coucher] : [c.leverA, soleil(new Date(now.getTime() + 864e5), lat, lon).lever];
+    const morceaux = [];
+    let icone = nuit ? 'cielLune' : 'cielSoleil';
+    if (cielData && typeof cielData.t === 'number') {
+      icone = ICONE_CIEL(cielData.code, nuit);
+      morceaux.push(`${Math.round(cielData.t)}°`, esc((cielData.code <= 1 && nuit) ? c.nuit : (c.codes[cielData.code] || c.codes[3])));
+    }
+    morceaux.push(esc(modele).replace('{h}', heure(h)));
+    el.innerHTML = `${ico(icone)}<span>${morceaux.join(' · ')}</span>`;
+    affiner(el);
   }
 
   /* ---------- Toast, copie, vibration ---------- */
@@ -214,65 +334,57 @@
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, secours); else secours();
   }
 
-  /* ---------- Images des chapitres ---------- */
+  /* ---------- Images des chapitres (dans les pages seulement) ---------- */
   const PHOTO = { arrivee: 'h-arrivee', wifi: 'h-wifi', maison: 'h-maison', regles: 'h-regles', autour: 'h-autour', conciergerie: 'h-conciergerie', bruno: 'h-bruno', avis: 'h-avis' };
-  const HERO = ['hero-billard', 'hero-bougies', 'hero-guitares'];
+
+  /* ---------- Emblèmes du sommaire ---------- */
+  const G_GOOGLE = '<svg viewBox="0 0 256 262" aria-hidden="true"><path fill="#4285F4" d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622l38.755 30.023l2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"/><path fill="#34A853" d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055c-34.523 0-63.824-22.773-74.269-54.25l-1.531.13l-40.298 31.187l-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"/><path fill="#FBBC05" d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82c0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602z"/><path fill="#EA4335" d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0C79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"/></svg>';
+  const EMB = {
+    arrivee: () => `<span class="emb emb-cle">${window.FH_CLE ? `<svg viewBox="0 0 843 210" aria-hidden="true"><path d="${window.FH_CLE}"/></svg>` : ico('key')}</span>`,
+    wifi: () => '<span class="emb emb-wifi"><svg viewBox="0 0 48 48" aria-hidden="true"><path class="a3" d="M6 19.5a26 26 0 0 1 36 0"/><path class="a2" d="M12 26a17.5 17.5 0 0 1 24 0"/><path class="a1" d="M18 32.4a9 9 0 0 1 12 0"/><circle class="pt" cx="24" cy="38.5" r="2.3"/></svg></span>',
+    maison: () => '<span class="emb emb-sceau"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="c1" cx="24" cy="24" r="21"/><circle class="c2" cx="24" cy="24" r="17.2"/><text x="24.4" y="29.2" text-anchor="middle">FH</text></svg></span>',
+    regles: () => '<span class="emb emb-trait"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8.5 40V17a7.5 7.5 0 0 1 15 0v23z"/><path d="M24.5 40V17a7.5 7.5 0 0 1 15 0v23z"/><path class="l" d="M12.5 22h7M12.5 27h7M12.5 32h7M28.5 22h7M28.5 27h7M28.5 32h7"/></svg></span>',
+    autour: () => `<span class="emb emb-mont"><svg viewBox="0 0 48 48" aria-hidden="true"><g transform="translate(24 33) scale(.044) translate(-500 -500)"><path class="m" d="${MONT}"/></g><path class="h" d="M4 33h40"/><path class="o" d="M9 38.5c3-1.6 5-1.6 8 0s5 1.6 8 0 5-1.6 8 0 4-1.4 6-.4"/></svg></span>`,
+    conciergerie: () => '<span class="emb emb-trait"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15.6" r="1.9"/><path d="M24 17.5v3.2"/><path d="M10.5 33.5a13.5 13.5 0 0 1 27 0"/><path d="M7 33.5h34"/><path d="M9.5 38h29"/><path class="l" d="M15.5 29a9 9 0 0 1 5-5.6"/></svg></span>',
+    bruno: () => '<span class="emb emb-vinyle"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19.5"/><circle class="l" cx="24" cy="24" r="15"/><circle class="l" cx="24" cy="24" r="11.2"/><circle class="etiquette" cx="24" cy="24" r="6.6"/><circle class="trou" cx="24" cy="24" r="1.3"/><path class="reflet" d="M33.6 11.4a15 15 0 0 1 3.9 5.8"/></svg></span>',
+    urgences: () => '<span class="emb emb-num">112</span>',
+    avis: () => `<span class="emb emb-google">${G_GOOGLE}</span>`
+  };
 
   /* ---------- Accueil ---------- */
   function rendreAccueil() {
     const t = T(), a = t.accueil, c = CFG.contact;
     const lettres = 'FUN HOUSE'.split('').map((ch, i) => ch === ' ' ? '<span class="esp"></span>' : `<span class="l" style="transition-delay:${(0.35 + i * 0.06).toFixed(2)}s">${ch}</span>`).join('');
-    const itin = CFG.adresse
-      ? `<a class="action" href="${gmaps(CFG.adresse)}" target="_blank" rel="noopener"><span class="rond">${ico('car')}</span>${esc(a.rapides.itineraire)}</a>`
-      : `<button type="button" class="action" data-action="partager"><span class="rond">${ico('share')}</span>${esc(a.rapides.partager)}</button>`;
-    const u = t.urgences;
-    const tuiles = a.sections.map((s, i) => {
-      const large = i === 0, sombre = s.id === 'urgences';
-      const img = PHOTO[s.id] ? `<img src="img/${PHOTO[s.id]}${large ? '' : '-m'}.webp" alt="" loading="lazy" width="${large ? 1080 : 600}" height="${large ? 1320 : 750}">` : '';
-      const extra = sombre ? `<span class="tuile-chiffres">${u.liste.slice(0, 3).map((x) => esc(x.n)).join('<i>·</i>')}</span>` : '';
-      return `<li class="tuile r${large ? ' large' : ''}${sombre ? ' sombre' : ''}" style="transition-delay:${Math.min(i, 6) * 70}ms">
-        <button type="button" data-page="${s.id}" aria-label="${esc(s.titre)}">
-          <span class="tuile-img">${img}</span>
-          <span class="tuile-num">${deux(i + 1)}</span>
-          ${extra}
-          <span class="tuile-texte"><b>${esc(s.titre)}</b><small>${esc(sombre ? a.urgenceMini : s.sous)}</small></span>
-        </button></li>`;
-    }).join('');
+    const tuiles = a.sections.map((s, i) => `<li class="tuile r${s.id === 'urgences' ? ' sombre' : ''}" style="--i:${i}"><button type="button" class="tuile-b" data-page="${s.id}" aria-label="${esc(s.titre)}">${(EMB[s.id] || (() => ''))()}<span class="tuile-l">${esc(s.court || s.titre)}</span></button></li>`).join('');
     $('#accueil').innerHTML = `
       <section class="vitrine">
         <div class="arche-bloc">
-          <div class="arche" id="arche">
-            ${HERO.map((h, i) => `<div class="arche-img${i === 0 ? ' actif' : ''}"><img src="img/${h}.webp" alt="" width="1080" height="1350" ${i ? 'loading="lazy"' : 'fetchpriority="high"'}></div>`).join('')}
-          </div>
+          <div class="arche" id="arche"><div class="baie-cadre" id="baie"></div></div>
           <svg class="arche-trait" viewBox="0 0 400 500" preserveAspectRatio="none" aria-hidden="true"><path d="M10 478q0 12 12 12h356q12 0 12-12V200A190 190 0 0 0 10 200Z" vector-effect="non-scaling-stroke"/></svg>
           <span class="sceau" aria-hidden="true"><i></i><b>FH</b></span>
         </div>
-        <div class="arche-index" aria-hidden="true">${HERO.map((h, i) => `<i${i === 0 ? ' class="actif"' : ''}></i>`).join('')}</div>
         <p class="sur">${esc(a.sur)}</p>
         <h1 class="mot" aria-label="Fun House">${lettres}</h1>
         <p class="sous">${esc(a.sousTitre)}</p>
         <p class="lieu-mini">${esc(a.lieu)}</p>
+        <p class="direct" id="direct" aria-live="polite"></p>
       </section>
 
-      <section class="ciel r" id="ciel" aria-live="polite"></section>
-
-      <a class="sejour r" href="#/arrivee">
-        <div><span class="lab">${esc(a.sejour.arrivee)}</span><b>${hh(CFG.arrivee)}</b><small>${esc(a.sejour.aPartir)} ${hh(CFG.arrivee)}</small></div>
-        <div class="sep"></div>
-        <div><span class="lab">${esc(a.sejour.depart)}</span><b>${hh(CFG.depart)}</b><small>${esc(a.sejour.avant)} ${hh(CFG.depart)}</small></div>
-        <div class="suite"><span>${esc(a.sejour.lien)}</span>${ico('chevR')}</div>
-      </a>
-
-      <nav class="actions r" aria-label="${esc(a.sejour.titre)}">
-        <button type="button" class="action" data-page="wifi"><span class="rond">${ico('wifi')}</span>${esc(a.rapides.wifi)}</button>
-        <a class="action" href="${tel(c.telIntl)}"><span class="rond">${ico('phone')}</span>${esc(a.rapides.appeler)}</a>
-        <a class="action" href="${sms(c.telIntl, CFG.smsDemande[lang])}"><span class="rond">${ico('sms')}</span>${esc(a.rapides.message)}</a>
-        ${itin}
-      </nav>
+      <section class="sejour r">
+        <a class="sejour-h" href="#/arrivee" aria-label="${esc(a.sejour.lien)}">
+          <div><span class="lab">${esc(a.sejour.arrivee)}</span><b>${hh(CFG.arrivee)}</b><small>${esc(a.sejour.aPartir)} ${hh(CFG.arrivee)}</small></div>
+          <div class="sep"></div>
+          <div><span class="lab">${esc(a.sejour.depart)}</span><b>${hh(CFG.depart)}</b><small>${esc(a.sejour.avant)} ${hh(CFG.depart)}</small></div>
+        </a>
+        <div class="sejour-b">
+          <a class="btn" href="${tel(c.telIntl)}">${ico('phone')}${esc(a.sejour.appeler)}</a>
+          <a class="btn fin" href="${sms(c.telIntl, CFG.smsDemande[lang])}">${ico('sms')}${esc(a.sejour.message)}</a>
+        </div>
+      </section>
 
       <section class="sommaire">
         <div class="sommaire-tete r"><span class="eyebrow">${esc(a.sommaire.eyebrow)}</span><h2 class="titre">${esc(a.sommaire.titre)} <em>${esc(a.sommaire.titreIt)}</em></h2></div>
-        <ul class="mosaique">${tuiles}</ul>
+        <ul class="grille">${tuiles}</ul>
       </section>
 
       <footer class="pied r">
@@ -286,44 +398,8 @@
         ${standalone ? '' : `<div class="installer">${ico('install')}<div><b>${esc(a.pied.installer)}</b>${esc(isIOS ? a.pied.installerAide : a.pied.installerAideAndroid)}</div></div>`}
       </footer>`;
     $$('.langues button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
-    rendreFlottant();
-    demarrerArche();
+    baieCle = '';
     chargerCiel();
-  }
-
-  /* ---------- Barre flottante : wifi, appeler, message, quand les actions sont hors de vue ---------- */
-  let flottantIO = null;
-  function rendreFlottant() {
-    const a = T().accueil, c = CFG.contact;
-    let f = $('#flottant');
-    if (!f) { f = document.createElement('nav'); f.id = 'flottant'; f.className = 'flottant'; document.body.appendChild(f); }
-    f.setAttribute('aria-label', a.sommaire.eyebrow);
-    f.innerHTML = `<button type="button" data-page="wifi">${ico('wifi')}<span>${esc(a.flottant.wifi)}</span></button>
-      <a href="${tel(c.telIntl)}">${ico('phone')}<span>${esc(a.flottant.appeler)}</span></a>
-      <a href="${sms(c.telIntl, CFG.smsDemande[lang])}">${ico('sms')}<span>${esc(a.flottant.message)}</span></a>`;
-    if (flottantIO) flottantIO.disconnect();
-    const cible = $('#accueil .actions');
-    if (!cible || !('IntersectionObserver' in window)) return;
-    flottantIO = new IntersectionObserver((es) => { const e = es[0]; f.classList.toggle('visible', !e.isIntersecting && e.boundingClientRect.top < 0); }, { threshold: 0 });
-    flottantIO.observe(cible);
-  }
-
-  /* ---------- Diaporama de l'arche ---------- */
-  let archeT = null, archeI = 0;
-  const DUREE = 6500;
-  function demarrerArche() {
-    clearInterval(archeT); archeI = 0;
-    const imgs = $$('#arche .arche-img'), bars = $$('.arche-index i');
-    if (!imgs.length) return;
-    const zoom = (el) => { el.classList.remove('zoom'); void el.offsetWidth; el.classList.add('zoom'); };
-    zoom(imgs[0]);
-    if (reduce) return;
-    archeT = setInterval(() => {
-      if (document.hidden) return;
-      const prev = archeI; archeI = (archeI + 1) % imgs.length;
-      imgs[prev].classList.remove('actif'); imgs[archeI].classList.add('actif'); zoom(imgs[archeI]);
-      bars.forEach((b, i) => { b.classList.remove('actif'); void b.offsetWidth; if (i === archeI) b.classList.add('actif'); });
-    }, DUREE);
   }
 
   /* ---------- Pages ---------- */
@@ -429,6 +505,7 @@
       pages.push(page('autour', `${au.titre} ${au.titreIt}`, (ph) => `${entete('autour', au.eyebrow, au.titre, au.titreIt, ph)}
         <div class="page-contenu">
           <p class="intro r">${esc(au.intro)}</p>
+          <a class="maree carte r" href="${esc(CFG.marees)}" target="_blank" rel="noopener"><span class="pastille">${ico('maree')}</span><span><b>${esc(au.maree.titre)}</b><small>${esc(au.maree.texte)}</small></span>${ico('ext', 'ico fleche')}</a>
           <div class="onglets" role="tablist">${au.onglets.map((o, i) => `<button type="button" class="onglet" role="tab" aria-selected="${i === 0}" data-onglet="${o.id}">${esc(o.l)}</button>`).join('')}</div>
           ${au.onglets.map((o, i) => `<ul class="lieux" role="tabpanel" data-panneau="${o.id}" ${i ? 'hidden' : ''}>${o.items.map((it) => `<li class="lieu"><div><b>${esc(it.t)}</b><div class="s">${esc(it.s)}</div></div><div class="dist"><b>${esc(it.km)}</b><small>${esc(it.min)} ${esc(k.min)}</small></div>${liensLieu(it.q)}</li>`).join('')}</ul>`).join('')}
           <p class="petit doux" style="margin-top:18px">${esc(au.note)}</p>
@@ -476,7 +553,7 @@
         <div class="page-contenu avis">
           <div class="etoiles r">${ico('star')}${ico('star')}${ico('star')}${ico('star')}${ico('star')}</div>
           <p class="intro r">${esc(v.texte)}</p>
-          <a class="btn plein r" href="${c.avisGoogle}" target="_blank" rel="noopener">${ico('star')}${esc(v.google)}</a>
+          <a class="btn plein r" href="${c.avisGoogle}" target="_blank" rel="noopener"><span class="g-rond">${G_GOOGLE}</span>${esc(v.google)}</a>
           <p class="petit doux" style="margin-top:14px">${esc(v.plateforme)}</p>
           <p class="bientot r">${esc(v.bientot)}</p>
           <img src="img/logo-cdm.png" alt="CDM Conciergerie, Clés des Merveilles" width="790" height="316" loading="lazy" style="width:150px;height:auto;margin:6px auto 10px">
@@ -621,8 +698,8 @@
     requestAnimationFrame(() => { ticA = false; const y = Math.min(window.scrollY, 700); const a = $('#arche'); if (a) a.style.transform = `translate3d(0, ${(y * 0.18).toFixed(1)}px, 0)`; });
   }, { passive: true });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (lightbox.classList.contains('ouverte')) fermerLightbox(); else if (courante) fermer(); } });
-  setInterval(() => { if ($('#ciel')) rendreCiel(cielData); }, 60000);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden && $('#ciel')) chargerCiel(); });
+  setInterval(() => { if (!document.hidden) majCiel(); }, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && $('#baie')) chargerCiel(); });
 
   /* ---------- Ouverture : la clé trace, tourne, les portes s'ouvrent ---------- */
   const ouv = $('#ouverture');

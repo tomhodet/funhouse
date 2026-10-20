@@ -90,7 +90,9 @@ window.FH_CONTENT = {
         "depart": "Départ",
         "aPartir": "à partir de",
         "avant": "avant",
-        "lien": "Clés, linge et départ"
+        "lien": "Clés, linge et départ",
+        "appeler": "Appeler Alicia",
+        "message": "Message"
       },
       "sommaire": {
         "eyebrow": "Le livret",
@@ -101,47 +103,56 @@ window.FH_CONTENT = {
         {
           "id": "arrivee",
           "titre": "Arrivée et départ",
-          "sous": "Clés, linge, avant de partir"
+          "sous": "Clés, linge, avant de partir",
+          "court": "Arrivée et départ"
         },
         {
           "id": "wifi",
           "titre": "Le wifi",
-          "sous": "Réseau, mot de passe, QR code"
+          "sous": "Réseau, mot de passe, QR code",
+          "court": "Wifi"
         },
         {
           "id": "maison",
           "titre": "La maison",
-          "sous": "Photos, équipements, chambres"
+          "sous": "Photos, équipements, chambres",
+          "court": "La maison"
         },
         {
           "id": "regles",
           "titre": "Règles et commandements",
-          "sous": "Pour que la fête reste belle"
+          "sous": "Pour que la fête reste belle",
+          "court": "Les règles"
         },
         {
           "id": "autour",
           "titre": "Autour de la Fun House",
-          "sous": "Courses, tables, visites, plages"
+          "sous": "Courses, tables, visites, plages",
+          "court": "Alentours"
         },
         {
           "id": "conciergerie",
           "titre": "La conciergerie",
-          "sous": "ULM, vélos, minibus, sur demande"
+          "sous": "ULM, vélos, minibus, sur demande",
+          "court": "Conciergerie"
         },
         {
           "id": "bruno",
           "titre": "Le mot de Bruno",
-          "sous": "Pourquoi « Fun House »"
+          "sous": "Pourquoi « Fun House »",
+          "court": "Votre hôte"
         },
         {
           "id": "urgences",
           "titre": "Urgences",
-          "sous": "Numéros utiles, appel direct"
+          "sous": "Numéros utiles, appel direct",
+          "court": "Urgences"
         },
         {
           "id": "avis",
           "titre": "Votre avis",
-          "sous": "Merci pour votre visite"
+          "sous": "Merci pour votre visite",
+          "court": "Votre avis"
         }
       ],
       "pied": {
@@ -187,7 +198,9 @@ window.FH_CONTENT = {
           "95": "Orage",
           "96": "Orage et grêle",
           "99": "Orage et grêle"
-        }
+        },
+        "coucherA": "Coucher du soleil à {h}",
+        "leverA": "Lever du soleil à {h}"
       },
       "urgenceMini": "Appel direct",
       "flottant": {
@@ -812,7 +825,11 @@ window.FH_CONTENT = {
           ]
         }
       ],
-      "note": "Temps de trajet en voiture depuis Moidrey, hors trafic. Les horaires d'ouverture sont à vérifier sur place ou sur la fiche du lieu."
+      "note": "Temps de trajet en voiture depuis Moidrey, hors trafic. Les horaires d'ouverture sont à vérifier sur place ou sur la fiche du lieu.",
+      "maree": {
+        "titre": "Horaires des marées",
+        "texte": "La mer monte vite dans la baie. Vérifiez l'heure de la marée avant toute balade sur la grève, et préférez une traversée guidée."
+      }
     },
     "urgences": {
       "eyebrow": "En cas de besoin",
@@ -905,7 +922,9 @@ window.FH_CONTENT = {
         "depart": "Check-out",
         "aPartir": "from",
         "avant": "before",
-        "lien": "Keys, linen and leaving"
+        "lien": "Keys, linen and leaving",
+        "appeler": "Call Alicia",
+        "message": "Text"
       },
       "sommaire": {
         "eyebrow": "The guide",
@@ -916,47 +935,56 @@ window.FH_CONTENT = {
         {
           "id": "arrivee",
           "titre": "Check-in and check-out",
-          "sous": "Keys, linen, before you leave"
+          "sous": "Keys, linen, before you leave",
+          "court": "Check-in and out"
         },
         {
           "id": "wifi",
           "titre": "Wifi",
-          "sous": "Network, password, QR code"
+          "sous": "Network, password, QR code",
+          "court": "Wifi"
         },
         {
           "id": "maison",
           "titre": "The house",
-          "sous": "Photos, amenities, bedrooms"
+          "sous": "Photos, amenities, bedrooms",
+          "court": "The house"
         },
         {
           "id": "regles",
           "titre": "Rules and commandments",
-          "sous": "So the party stays a good one"
+          "sous": "So the party stays a good one",
+          "court": "House rules"
         },
         {
           "id": "autour",
           "titre": "Around the Fun House",
-          "sous": "Shops, tables, sights, beaches"
+          "sous": "Shops, tables, sights, beaches",
+          "court": "Around"
         },
         {
           "id": "conciergerie",
           "titre": "The concierge",
-          "sous": "Microlight, bikes, minibus, on request"
+          "sous": "Microlight, bikes, minibus, on request",
+          "court": "Concierge"
         },
         {
           "id": "bruno",
           "titre": "A word from Bruno",
-          "sous": "Why “Fun House”"
+          "sous": "Why “Fun House”",
+          "court": "Your host"
         },
         {
           "id": "urgences",
           "titre": "Emergency",
-          "sous": "Useful numbers, one-tap call"
+          "sous": "Useful numbers, one-tap call",
+          "court": "Emergency"
         },
         {
           "id": "avis",
           "titre": "Your review",
-          "sous": "Thank you for staying"
+          "sous": "Thank you for staying",
+          "court": "Your review"
         }
       ],
       "pied": {
@@ -1002,7 +1030,9 @@ window.FH_CONTENT = {
           "95": "Thunderstorm",
           "96": "Thunder and hail",
           "99": "Thunder and hail"
-        }
+        },
+        "coucherA": "Sunset at {h}",
+        "leverA": "Sunrise at {h}"
       },
       "urgenceMini": "One-tap call",
       "flottant": {
@@ -1627,7 +1657,11 @@ window.FH_CONTENT = {
           ]
         }
       ],
-      "note": "Driving times from Moidrey, without traffic. Opening hours should be checked on site or on the place's listing."
+      "note": "Driving times from Moidrey, without traffic. Opening hours should be checked on site or on the place's listing.",
+      "maree": {
+        "titre": "Tide times",
+        "texte": "The tide comes in fast in the bay. Check the tide times before walking out onto the sands, and prefer a guided crossing."
+      }
     },
     "urgences": {
       "eyebrow": "If you need help",
