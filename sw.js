@@ -2,7 +2,7 @@
    Pages, styles et scripts : réseau d'abord (les mises à jour arrivent tout de suite).
    Images et polices : cache d'abord.
    Changer VERSION à chaque mise à jour pour nettoyer l'ancien cache. */
-const VERSION = 'funhouse-v3';
+const VERSION = 'funhouse-v3b';
 const COEUR = [
   './', 'index.html', 'styles.css?v=3', 'app.js?v=3', 'content.js?v=3', 'cle.js', 'qrcode.min.js', 'manifest.webmanifest',
   'fonts/playfair-display-latin-500-normal.woff2', 'fonts/playfair-display-latin-500-italic.woff2',
