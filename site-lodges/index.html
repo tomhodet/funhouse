@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Les Lodges de la Baie · Cinq lodges et une piscine intérieure, proche du Mont-Saint-Michel</title>
+<meta name="description" content="Une ferme manoir du XVIe siècle rénovée à Servon, proche du Mont-Saint-Michel. Cinq lodges avec terrasse face à l'étang, une pièce de vie de 60 m² et une piscine intérieure chauffée. Jusqu'à 14 voyageurs.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F5F1E8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23152A35'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-style='italic' font-size='38' text-anchor='middle' fill='%23D9BC8A'%3EL%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="vendor/lenis.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="evitement" href="#contenu">Aller au contenu</a>
+
+<header class="entete" id="entete">
+  <a class="marque" href="#haut" aria-label="Les Lodges de la Baie, retour en haut de page">Les Lodges <em>de la Baie</em></a>
+  <nav class="nav" aria-label="Navigation principale">
+    <a href="#domaine">Le domaine</a>
+    <a href="#lodges">Les lodges</a>
+    <a href="#piscine">La piscine</a>
+    <a href="#alentours">Alentours</a>
+    <a href="#pratique">Bon à savoir</a>
+  </nav>
+  <a class="entete-tel" href="tel:+33640571882" aria-label="Appeler Alicia au 06 40 57 18 82"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4.1-2 1.4a12 12 0 0 0 6.4 6.4l1.4-2 4.1 1.4v2.6a2 2 0 0 1-2.2 2A16.8 16.8 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></svg><span>06 40 57 18 82</span></a>
+  <a class="btn btn-petit" href="#reserver">Vos dates <span class="fleche" aria-hidden="true">→</span></a>
+</header>
+
+<main id="contenu">
+
+<!-- ============ Ouverture : la photo du domaine et le calendrier tout de suite ============ -->
+<section class="ouverture" id="haut" aria-labelledby="titre-ouverture">
+  <div class="ouverture-photo" aria-hidden="true">
+    <div class="ouverture-film" id="ouverture-film">
+      <img id="eau-img" src="img/59.webp" alt="" width="2560" height="1183" fetchpriority="high" decoding="async">
+      <canvas id="eau" class="eau"></canvas>
+    </div>
+  </div>
+  <div class="ouverture-voile" aria-hidden="true"></div>
+
+  <div class="ouverture-grille">
+    <div class="ouverture-texte">
+      <p class="libelle sur-sombre" data-entree="1">Servon, <span class="insecable">proche du Mont-Saint-Michel</span></p>
+      <h1 id="titre-ouverture">
+        <span class="ligne"><span>Cinq lodges, une piscine,</span></span>
+        <span class="ligne"><span><em>au calme de la baie.</em></span></span>
+      </h1>
+      <hr class="filet" data-entree="2">
+      <p class="accroche" data-entree="3">Une ferme manoir du XVIe siècle, rénovée pour quatorze voyageurs. Une terrasse par lodge, face à l'étang. Une piscine intérieure chauffée, privatisée pour votre séjour.</p>
+      <ul class="reperes" data-entree="4">
+        <li><strong>4,92</strong><span>sur 39 avis Airbnb</span></li>
+        <li><strong>14</strong><span>voyageurs</span></li>
+        <li><strong>12 × 5 m</strong><span>piscine chauffée</span></li>
+      </ul>
+    </div>
+
+    <!-- Carte de réservation -->
+    <aside class="resa" id="reserver" aria-labelledby="titre-resa">
+      <div class="resa-tete">
+        <h2 id="titre-resa" class="resa-titre">Vos dates</h2>
+        <span class="demo" title="Disponibilités fictives, en attendant le branchement du vrai calendrier">Calendrier de démonstration</span>
+      </div>
+
+      <div class="resa-cases">
+        <div class="case actif" id="case-arrivee"><small>Arrivée</small><b id="val-arrivee">Choisir</b></div>
+        <div class="case" id="case-depart"><small>Départ</small><b id="val-depart">Choisir</b></div>
+      </div>
+
+      <div class="cal">
+        <div class="cal-tete">
+          <button type="button" class="cal-fleche" id="mois-prec" aria-label="Mois précédent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <p class="cal-mois" id="mois-nom" aria-live="polite">&nbsp;</p>
+          <button type="button" class="cal-fleche" id="mois-suiv" aria-label="Mois suivant"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="cal-semaine" aria-hidden="true"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+        <div class="cal-grille" id="grille"><p class="cal-attente">Chargement du calendrier…</p></div>
+      </div>
+
+      <p class="resa-aide" id="aide" aria-live="polite"></p>
+
+      <div class="resa-voyageurs">
+        <span>Voyageurs</span>
+        <div class="pas">
+          <button type="button" id="voy-moins" aria-label="Un voyageur de moins">−</button>
+          <output id="voy-val" aria-live="polite">8</output>
+          <button type="button" id="voy-plus" aria-label="Un voyageur de plus">+</button>
+        </div>
+      </div>
+
+      <div class="resa-total" id="total" hidden>
+        <span id="total-nuits"></span>
+        <b>Tarif confirmé par retour d'e-mail</b>
+      </div>
+
+      <button type="button" class="btn btn-plein" id="demander" disabled>Demander ces dates <span class="fleche" aria-hidden="true">→</span></button>
+      <p class="resa-note">Le domaine se réserve en entier. Rien n'est réglé sur ce site.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ Le domaine ============ -->
+<section class="section nacre" id="domaine" aria-labelledby="titre-domaine">
+  <div class="contenu domaine">
+    <div class="domaine-texte">
+      <p class="libelle">Le domaine</p>
+      <h2 id="titre-domaine">Le granit, l'étang,<br><em>et la campagne autour.</em></h2>
+      <hr class="filet" data-trace>
+      <p>Une ferme manoir du XVIe siècle, luxueusement rénovée, au milieu des champs. Cinq lodges de 50 à 60 m² s'alignent face à l'étang. Chacun a son entrée, sa place de parking et sa terrasse privée.</p>
+      <p>Au coucher du soleil, les oiseaux de la baie se posent sur l'eau. Les chevaux sont dans le pré. Le verger est au bout du jardin.</p>
+      <dl class="chiffres">
+        <div><dt>5</dt><dd>lodges de 50 à 60 m²</dd></div>
+        <div><dt>14</dt><dd>voyageurs au plus</dd></div>
+        <div><dt>60 m²</dt><dd>de pièce de vie commune</dd></div>
+        <div><dt>1</dt><dd>piscine intérieure privatisée</dd></div>
+      </dl>
+    </div>
+    <div class="mosaique">
+      <button type="button" class="vue m-a" data-vue><img src="img/54.webp" alt="Les terrasses des lodges, côté étang" width="1920" height="1280" loading="lazy" decoding="async"></button>
+      <button type="button" class="vue m-b" data-vue><img src="img/45.webp" alt="Les chevaux dans le pré du domaine" width="1920" height="887" loading="lazy" decoding="async"></button>
+      <button type="button" class="vue m-c" data-vue><img src="img/50.webp" alt="La terrasse privée devant un lodge" width="1920" height="1440" loading="lazy" decoding="async"></button>
+      <button type="button" class="vue m-d" data-vue><img src="img/43.webp" alt="La vue des terrasses sur la campagne et l'étang" width="1920" height="887" loading="lazy" decoding="async"></button>
+      <button type="button" class="lien toutes" id="toutes-photos">Voir toutes les photos <span class="fleche" aria-hidden="true">→</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ La piscine : le moment fort ============ -->
+<section class="bassin" id="piscine" aria-labelledby="titre-piscine">
+  <div class="bassin-piste" id="bassin-piste">
+  <div class="bassin-scene">
+    <div class="bassin-fenetre" id="bassin-fenetre">
+      <img src="img/55.webp" alt="La piscine intérieure et son coin salon" width="2560" height="1183" loading="lazy" decoding="async">
+    </div>
+    <div class="bassin-legende" id="bassin-legende">
+      <p class="libelle sur-sombre">La piscine</p>
+      <h2 id="titre-piscine">Douze mètres de bassin,<br><em>rien que pour vous.</em></h2>
+    </div>
+  </div>
+  </div>
+
+  <div class="contenu bassin-suite">
+    <div class="bassin-texte">
+      <div class="bassin-tete-mobile">
+        <p class="libelle sur-sombre">La piscine</p>
+        <h2>Douze mètres de bassin,<br><em>rien que pour vous.</em></h2>
+      </div>
+      <hr class="filet" data-trace>
+      <p>La piscine occupe une dépendance aménagée pour elle. Elle est privatisée pour votre groupe, en toute saison.</p>
+      <p>Autour du bassin : un vestiaire avec douche à l'italienne et sanitaires, un coin bar et salon, une terrasse en bois et des bains de soleil.</p>
+      <ul class="bassin-faits">
+        <li><b>12 × 5 m</b><span>chauffée</span></li>
+        <li><b>27 °C</b><span>de mai à septembre</span></li>
+        <li><b>8 h à 21 h</b><span>ouverte chaque jour</span></li>
+      </ul>
+    </div>
+    <div class="bassin-vues">
+      <button type="button" class="vue" data-vue><img src="img/60.webp" alt="Le bassin et son coin détente" width="1600" height="739" loading="lazy" decoding="async"></button>
+      <button type="button" class="vue" data-vue><img src="img/63.webp" alt="Les bains de soleil sur la terrasse de la piscine" width="1920" height="1272" loading="lazy" decoding="async"></button>
+      <button type="button" class="vue" data-vue><img src="img/57.webp" alt="Le bâtiment de la piscine, côté jardin" width="1600" height="739" loading="lazy" decoding="async"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Les lodges ============ -->
+<section class="section" id="lodges" aria-labelledby="titre-lodges">
+  <div class="contenu">
+    <div class="tete">
+      <p class="libelle">Les lodges</p>
+      <h2 id="titre-lodges">Cinq lodges,<br><em>cinq atmosphères.</em></h2>
+      <hr class="filet" data-trace>
+      <p>Une chambre par lodge, une salle d'eau ou de bain attenante, une terrasse face à la nature. Les lodges 2 et 3 communiquent par une double porte.</p>
+    </div>
+
+    <div class="onglets" role="tablist" aria-label="Choisir un lodge">
+      <button type="button" role="tab" id="t1" aria-controls="p1" aria-selected="true"><b>Lodge 1</b><span>De plain-pied</span></button>
+      <button type="button" role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1"><b>Lodge 2</b><span>Baroque</span></button>
+      <button type="button" role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1"><b>Lodge 3</b><span>Urbain</span></button>
+      <button type="button" role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1"><b>Lodge 4</b><span>Industriel</span></button>
+      <button type="button" role="tab" id="t5" aria-controls="p5" aria-selected="false" tabindex="-1"><b>Lodge 5</b><span>Le cocon</span></button>
+    </div>
+
+    <div class="panneaux">
+      <article class="panneau" role="tabpanel" id="p1" aria-labelledby="t1">
+        <div class="panneau-vues">
+          <button type="button" class="vue grande" data-vue><img src="img/05.webp" alt="Lodge 1, la chambre de plain-pied" width="1920" height="1439" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/06.webp" alt="Lodge 1, la mezzanine et son canapé-lit" width="1920" height="1280" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/27.webp" alt="Lodge 1, la salle d'eau accessible" width="1920" height="887" loading="lazy" decoding="async"></button>
+        </div>
+        <div class="panneau-texte">
+          <h3>Lodge 1, <em>de plain-pied</em></h3>
+          <p>Accessible aux personnes à mobilité réduite. La chambre et la salle d'eau, avec douche à l'italienne, sont de plain-pied. La mezzanine ajoute deux couchages avec un canapé-lit.</p>
+          <ul class="fiche"><li><b>4</b> voyageurs</li><li>Salle d'eau de plain-pied</li><li>Terrasse privée</li></ul>
+        </div>
+      </article>
+
+      <article class="panneau" role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+        <div class="panneau-vues">
+          <button type="button" class="vue grande" data-vue><img src="img/11.webp" alt="Lodge 2, la chambre à l'étage" width="1920" height="1440" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/10.webp" alt="Lodge 2, le salon" width="1920" height="1440" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/28.webp" alt="Lodge 2, la salle de bain" width="1920" height="887" loading="lazy" decoding="async"></button>
+        </div>
+        <div class="panneau-texte">
+          <h3>Lodge 2, <em>baroque</em></h3>
+          <p>Noblesse des matières et touches de couleur. À l'étage, une chambre élégante. La salle de bain attenante a une baignoire et une douche à l'italienne.</p>
+          <ul class="fiche"><li><b>2</b> voyageurs</li><li>Baignoire et douche</li><li>Communique avec le lodge 3</li></ul>
+        </div>
+      </article>
+
+      <article class="panneau" role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+        <div class="panneau-vues">
+          <button type="button" class="vue grande" data-vue><img src="img/13.webp" alt="Lodge 3, la chambre en mezzanine" width="1920" height="1440" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/14.webp" alt="Lodge 3, le salon" width="1920" height="887" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/31.webp" alt="Lodge 3, la salle d'eau" width="1920" height="887" loading="lazy" decoding="async"></button>
+        </div>
+        <div class="panneau-texte">
+          <h3>Lodge 3, <em>urbain</em></h3>
+          <p>Le béton côtoie l'acier et le bois. Un espace nuit en mezzanine et une salle d'eau attenante avec douche à l'italienne.</p>
+          <ul class="fiche"><li><b>2</b> voyageurs</li><li>Douche à l'italienne</li><li>Communique avec le lodge 2</li></ul>
+        </div>
+      </article>
+
+      <article class="panneau" role="tabpanel" id="p4" aria-labelledby="t4" hidden>
+        <div class="panneau-vues">
+          <button type="button" class="vue grande" data-vue><img src="img/17.webp" alt="Lodge 4, la chambre à l'étage" width="1920" height="1440" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/16.webp" alt="Lodge 4, le salon et ses fauteuils en fer et cuir" width="1920" height="2881" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/15.webp" alt="Lodge 4, la chambre en mezzanine" width="1920" height="1046" loading="lazy" decoding="async"></button>
+        </div>
+        <div class="panneau-texte">
+          <h3>Lodge 4, <em>industriel</em></h3>
+          <p>Sols en fer patiné et en aluminium. Au rez-de-chaussée, des fauteuils d'inspiration Chesterfield mêlent le fer et le cuir. La chambre est en mezzanine, avec sa salle d'eau attenante.</p>
+          <ul class="fiche"><li><b>2</b> voyageurs</li><li>Douche à l'italienne</li><li>Terrasse privée</li></ul>
+        </div>
+      </article>
+
+      <article class="panneau" role="tabpanel" id="p5" aria-labelledby="t5" hidden>
+        <div class="panneau-vues">
+          <button type="button" class="vue grande" data-vue><img src="img/19.webp" alt="Lodge 5, la chambre sous les toits et sa baie vitrée" width="1920" height="1440" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/38.webp" alt="Lodge 5, la baignoire balnéo face à la baie vitrée" width="1920" height="887" loading="lazy" decoding="async"></button>
+          <button type="button" class="vue" data-vue><img src="img/21.webp" alt="Lodge 5, le salon" width="1920" height="887" loading="lazy" decoding="async"></button>
+        </div>
+        <div class="panneau-texte">
+          <h3>Lodge 5, <em>le cocon</em></h3>
+          <p>Trois niveaux, lumineux et calmes. Sous les toits, la chambre parentale et sa baignoire balnéo face à la baie vitrée, avec la vue sur la campagne. Au premier, un canapé-lit et une seconde salle d'eau. Accès direct à la pièce de vie.</p>
+          <ul class="fiche"><li><b>4</b> voyageurs</li><li>Baignoire balnéo</li><li>Deux salles d'eau</li></ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ La pièce de vie ============ -->
+<section class="section nacre" aria-labelledby="titre-vie">
+  <div class="contenu vie">
+    <div class="vie-vues">
+      <button type="button" class="vue v-a" data-vue><img src="img/00.webp" alt="La pièce de vie, ses baies vitrées et la table de 14 places" width="1920" height="887" loading="lazy" decoding="async"></button>
+      <button type="button" class="vue v-b" data-vue><img src="img/02.webp" alt="La cuisine ouverte et son îlot central" width="1920" height="887" loading="lazy" decoding="async"></button>
+      <button type="button" class="vue v-c" data-vue><img src="img/01.webp" alt="Le salon de la pièce de vie" width="1920" height="887" loading="lazy" decoding="async"></button>
+    </div>
+    <div class="vie-texte">
+      <p class="libelle">La pièce de vie</p>
+      <h2 id="titre-vie">Une seule table,<br><em>quatorze couverts.</em></h2>
+      <hr class="filet" data-trace>
+      <p>Soixante mètres carrés pour se retrouver. Les baies vitrées ouvrent sur la cour et sur la terrasse face à l'étang. La cuisine est ouverte, équipée, avec un grand îlot central.</p>
+      <ul class="liste-fine">
+        <li>Lave-vaisselle, four, plaques, micro-ondes, cafetière</li>
+        <li>Buanderie avec lave-linge, sèche-linge, réfrigérateur et congélateur</li>
+        <li>Barbecue Weber, parasol et table de ping-pong</li>
+        <li>Jeux de société, livres, système audio</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Autour de la baie ============ -->
+<section class="section" id="alentours" aria-labelledby="titre-alentours">
+  <div class="contenu alentours">
+    <div class="tete">
+      <p class="libelle">Autour de la baie</p>
+      <h2 id="titre-alentours">Le Mont au bout de la route,<br><em>la mer à marée haute.</em></h2>
+      <hr class="filet" data-trace>
+      <p>La baie connaît les plus grandes marées d'Europe continentale. Aux grands coefficients, le Mont redevient une île pour quelques heures.</p>
+    </div>
+    <ol class="route" aria-label="Temps de route depuis le domaine, en voiture">
+      <li><span>Le Mont-Saint-Michel</span><i></i><b>14 min</b></li>
+      <li><span>Pontorson</span><i></i><b>15 min</b></li>
+      <li><span>Avranches</span><i></i><b>18 min</b></li>
+      <li><span>Dol-de-Bretagne</span><i></i><b>30 min</b></li>
+      <li><span>Granville</span><i></i><b>44 min</b></li>
+      <li><span>Cancale</span><i></i><b>50 min</b></li>
+      <li><span>Saint-Malo</span><i></i><b>50 min</b></li>
+    </ol>
+    <p class="route-note">Temps en voiture, environ.</p>
+  </div>
+</section>
+
+<!-- ============ Bon à savoir ============ -->
+<section class="section" id="pratique" aria-labelledby="titre-pratique">
+  <div class="contenu">
+    <div class="tete">
+      <p class="libelle">Bon à savoir</p>
+      <h2 id="titre-pratique">Avant de venir,<br><em>l'essentiel.</em></h2>
+      <hr class="filet" data-trace>
+    </div>
+    <dl class="pratique">
+      <div><dt>Arrivée</dt><dd>À partir de 17 h, en autonomie. Alicia vous envoie les indications la veille.</dd></div>
+      <div><dt>Départ</dt><dd>Avant 10 h.</dd></div>
+      <div><dt>Stationnement</dt><dd>Gratuit sur place, une place devant chaque lodge. Portail sécurisé.</dd></div>
+      <div><dt>Linge</dt><dd>Linge de lit fourni. Oreillers et couvertures supplémentaires.</dd></div>
+      <div><dt>Avec des enfants</dt><dd>Lit bébé et chaise haute. Lit parapluie et baignoire bébé sur demande.</dd></div>
+      <div><dt>Ménage</dt><dd>Possible en supplément pour les séjours de plus de 6 jours, à demander à votre arrivée.</dd></div>
+      <div><dt>Piscine</dt><dd>Ouverte de 8 h à 21 h. Le volet se referme chaque soir, pour votre sécurité et la chaleur de l'eau.</dd></div>
+      <div><dt>D'octobre à avril</dt><dd>L'eau demande un temps de chauffe. Une réservation de dernière minute ne garantit pas les 27 °C. En plein hiver, un supplément peut être demandé.</dd></div>
+      <div><dt>Connexion</dt><dd>Wifi et espace de travail.</dd></div>
+      <div><dt>À noter</dt><dd>Caméras de surveillance extérieures sur le domaine.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============ Alicia, sur place ============ -->
+<section class="section nacre hote" id="hote" aria-labelledby="titre-hote">
+  <div class="contenu hote-grille">
+    <div class="hote-portrait">
+      <img src="img/alicia.webp" alt="Alicia, fondatrice de la Conciergerie Clés des Merveilles" width="640" height="1080" loading="lazy" decoding="async">
+    </div>
+    <div class="hote-texte">
+      <p class="libelle">Votre séjour, suivi sur place</p>
+      <h2 id="titre-hote">Une seule interlocutrice,<br><em>Alicia.</em></h2>
+      <hr class="filet" data-trace>
+      <p>Alicia a fondé la Conciergerie Clés des Merveilles, à Pontorson, à quelques minutes du domaine. Avant votre arrivée, pendant le séjour, au moment du départ : c'est elle qui vous répond.</p>
+      <p>Une question, une idée de sortie, une occasion à fêter ? Écrivez-lui.</p>
+      <div class="hote-actions">
+        <a class="btn" href="tel:+33640571882">Appeler Alicia <span class="fleche" aria-hidden="true">→</span></a>
+        <a class="hote-tel" href="tel:+33640571882"><small>Par téléphone</small><strong>06 40 57 18 82</strong></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Rappel ============ -->
+<section class="rappel" aria-labelledby="titre-rappel">
+  <picture>
+    <source media="(max-width:900px)" srcset="img/42.webp">
+    <img class="rappel-photo" id="rappel-photo" src="img/53.webp" alt="" width="2560" height="1912" loading="lazy" decoding="async">
+  </picture>
+  <div class="rappel-voile" aria-hidden="true"></div>
+  <div class="rappel-texte">
+    <p class="libelle sur-sombre">Coup de cœur voyageurs sur Airbnb</p>
+    <h2 id="titre-rappel">Vos dates en deux clics,<br><em>Alicia vous répond.</em></h2>
+    <a class="btn btn-creme" href="#reserver">Voir le calendrier <span class="fleche" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+</main>
+
+<footer class="pied">
+  <div class="contenu pied-grille">
+    <div>
+      <p class="marque marque-pied">Les Lodges <em>de la Baie</em></p>
+      <p>La Bretèche, 50170 Servon<br>Proche du Mont-Saint-Michel</p>
+    </div>
+    <div>
+      <p class="libelle">Contact</p>
+      <p><a href="tel:+33640571882">06 40 57 18 82</a><br><a href="mailto:conciergerieclesdesmerveilles@gmail.com">conciergerieclesdesmerveilles@gmail.com</a></p>
+    </div>
+    <div class="pied-cdm">
+      <img src="img/logo-cdm.png" alt="CDM Conciergerie" width="790" height="316" loading="lazy" decoding="async">
+      <p>Vos séjours sont suivis par la Conciergerie Clés des Merveilles, à Pontorson.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Barre mobile -->
+<div class="barre" id="barre" aria-hidden="true">
+  <p id="barre-texte">Jusqu'à 14 voyageurs</p>
+  <a class="btn btn-petit" id="barre-bouton" href="#reserver">Vos dates</a>
+</div>
+
+<!-- Demande de séjour -->
+<dialog class="fenetre" id="fenetre-demande" aria-labelledby="titre-demande" data-lenis-prevent>
+  <form id="demande-form" method="dialog" novalidate>
+    <button type="button" class="fermer" data-fermer aria-label="Fermer">×</button>
+    <p class="libelle">Demande de séjour</p>
+    <h2 id="titre-demande">Vos dates, <em>en un message.</em></h2>
+    <p class="recap" id="demande-recap"></p>
+    <label>Nom<input name="nom" autocomplete="name" required></label>
+    <label>Téléphone<input name="tel" type="tel" autocomplete="tel" inputmode="tel" required></label>
+    <label>E-mail <span>facultatif</span><input name="email" type="email" autocomplete="email"></label>
+    <label>Un mot pour Alicia <span>facultatif</span><textarea name="mot" rows="3"></textarea></label>
+    <p class="erreur" id="demande-erreur" hidden>Indiquez votre nom et un numéro de téléphone.</p>
+    <div class="fenetre-actions">
+      <button type="submit" class="btn btn-plein" id="envoi-principal" data-canal="email">Envoyer par e-mail <span class="fleche" aria-hidden="true">→</span></button>
+      <button type="submit" class="lien" id="envoi-second" data-canal="sms">Envoyer par SMS</button>
+      <button type="button" class="lien" id="copier">Copier la demande</button>
+    </div>
+    <p class="resa-note">Votre message s'ouvre avec la demande déjà écrite, adressée à Alicia. Il ne reste qu'à l'envoyer.</p>
+  </form>
+</dialog>
+
+<!-- Visionneuse -->
+<dialog class="visionneuse" id="visionneuse" aria-label="Photos du domaine" data-lenis-prevent>
+  <button type="button" class="fermer" data-fermer aria-label="Fermer">×</button>
+  <figure><img id="vision-img" alt=""><figcaption id="vision-legende"></figcaption></figure>
+  <button type="button" class="vision-fleche prec" id="photo-prec" aria-label="Photo précédente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button type="button" class="vision-fleche suiv" id="photo-suiv" aria-label="Photo suivante"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+</dialog>
+
+<script src="vendor/lenis.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

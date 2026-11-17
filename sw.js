@@ -19,6 +19,7 @@ self.addEventListener('fetch', (e) => {
   const req = e.request; const url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin) return;
   if (url.pathname.includes('/lodges-de-la-baie/')) return; /* autre livret, avec son propre service worker */
+  if (url.pathname.includes('/site-lodges/')) return; /* site des Lodges de la Baie, sans service worker */
   const reseauDabord = req.mode === 'navigate' || /\.(html|js|css|json|webmanifest)$/.test(url.pathname) || url.pathname.endsWith('/');
   if (reseauDabord) {
     e.respondWith(fetch(req).then((r) => { const copie = r.clone(); caches.open(VERSION).then((c) => c.put(req, copie)); return r; })
