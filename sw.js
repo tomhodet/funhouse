@@ -2,7 +2,7 @@
    Pages, styles et scripts : réseau d'abord (les mises à jour arrivent tout de suite).
    Images et polices : cache d'abord.
    Changer VERSION à chaque mise à jour pour nettoyer l'ancien cache. */
-const VERSION = 'funhouse-v4';
+const VERSION = 'funhouse-v5';
 const COEUR = [
   './', 'index.html', 'styles.css?v=4', 'app.js?v=4', 'content.js?v=4', 'cle.js', 'qrcode.min.js', 'manifest.webmanifest',
   'fonts/playfair-display-latin-500-normal.woff2', 'fonts/playfair-display-latin-500-italic.woff2',
@@ -13,11 +13,12 @@ self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(COEUR)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith('funhouse-') && k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 self.addEventListener('fetch', (e) => {
   const req = e.request; const url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin) return;
+  if (url.pathname.includes('/lodges-de-la-baie/')) return; /* autre livret, avec son propre service worker */
   const reseauDabord = req.mode === 'navigate' || /\.(html|js|css|json|webmanifest)$/.test(url.pathname) || url.pathname.endsWith('/');
   if (reseauDabord) {
     e.respondWith(fetch(req).then((r) => { const copie = r.clone(); caches.open(VERSION).then((c) => c.put(req, copie)); return r; })

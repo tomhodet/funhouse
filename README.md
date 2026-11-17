@@ -4,6 +4,8 @@ Livret d'accueil numérique de la Fun House (Moidrey, baie du Mont-Saint-Michel)
 
 En ligne : https://tomhodet.github.io/funhouse/
 
+Le dossier `lodges-de-la-baie/` contient un second livret, indépendant : Les Lodges de la Baie, à Servon (https://tomhodet.github.io/funhouse/lodges-de-la-baie/). Mêmes règles : tout le texte est dans son `content.js`.
+
 ## Modifier un texte, un horaire, le wifi
 
 Tout le contenu, en français et en anglais, est dans `content.js`.

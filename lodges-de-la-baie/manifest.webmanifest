@@ -1,0 +1,17 @@
+{
+  "name": "Les Lodges de la Baie · Livret d'accueil",
+  "short_name": "Lodges de la Baie",
+  "description": "Le livret d'accueil des Lodges de la Baie, à Servon. Conciergerie Clés des Merveilles.",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F1E8",
+  "theme_color": "#F5F1E8",
+  "lang": "fr",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
