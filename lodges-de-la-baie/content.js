@@ -6,6 +6,7 @@ window.FH_CONFIG = {
   "url": "https://tomhodet.github.io/funhouse/lodges-de-la-baie/",
   "nomMaison": "Les Lodges de la Baie",
   "motMarque": "LES LODGES",
+  "archePhoto": "img/arche-piscine.webp",
   "monogramme": "LB",
   "lieu": "Servon · Baie du Mont-Saint-Michel",
   "adresse": "Les Lodges de la Baie, La Bretêche, 50170 Servon",
@@ -212,7 +213,8 @@ window.FH_CONTENT = {
         "wifi": "Wifi",
         "appeler": "Appeler",
         "message": "Message"
-      }
+      },
+      "archeAlt": "La piscine intérieure chauffée du domaine"
     },
     "commun": {
       "retour": "Retour",
@@ -795,7 +797,7 @@ window.FH_CONTENT = {
         }
       ],
       "galerieTitre": "En images",
-      "galerieAide": "Touchez une photo : la couleur revient.",
+      "galerieAide": "Touchez une photo pour l'agrandir.",
       "photos": [
         {
           "f": "g-cour",
@@ -1083,7 +1085,8 @@ window.FH_CONTENT = {
         "wifi": "Wifi",
         "appeler": "Call",
         "message": "Text"
-      }
+      },
+      "archeAlt": "The estate's heated indoor pool"
     },
     "commun": {
       "retour": "Back",
@@ -1666,7 +1669,7 @@ window.FH_CONTENT = {
         }
       ],
       "galerieTitre": "In pictures",
-      "galerieAide": "Tap a photo: the colour comes back.",
+      "galerieAide": "Tap a photo to see it larger.",
       "photos": [
         {
           "f": "g-cour",

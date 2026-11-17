@@ -93,6 +93,7 @@
   I.thermo = '<path d="M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z"/><path d="M12 9v7"/>';
   I.enfant = '<circle cx="12" cy="5" r="2.2"/><path d="M12 8v7M8 10.5l4-1 4 1M9.5 21l2.5-6 2.5 6"/>';
   I.piscine = '<path d="M8 15V6a2.5 2.5 0 0 1 5 0M15 15V6a2.5 2.5 0 0 1 5 0M8 9h7M8 12.5h7"/><path d="M2 18.5c1.7-1.3 3.3-1.3 5 0s3.3 1.3 5 0 3.3-1.3 5 0 3.3 1.3 5 0"/>';
+  I.agrandir = '<path d="M14 4h6v6"/><path d="M20 4l-6.5 6.5"/><path d="M10 20H4v-6"/><path d="M4 20l6.5-6.5"/>';
   I.couleur = '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17" fill="currentColor" stroke="none" opacity=".35"/>';
   /* Ciel */
   I.cielSoleil = '<circle cx="12" cy="12" r="4.2"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>';
@@ -426,7 +427,7 @@
     $('#accueil').innerHTML = `
       <section class="vitrine">
         <div class="arche-bloc">
-          <div class="arche" id="arche"><div class="baie-cadre" id="baie"></div></div>
+          <div class="arche" id="arche">${CFG.archePhoto ? `<div class="baie-cadre baie-photo"><img src="${esc(CFG.archePhoto)}" alt="${esc(a.archeAlt || '')}" width="1000" height="1250" decoding="async" fetchpriority="high"></div>` : '<div class="baie-cadre" id="baie"></div>'}</div>
           <svg class="arche-trait" viewBox="0 0 400 500" preserveAspectRatio="none" aria-hidden="true"><path d="M10 478q0 12 12 12h356q12 0 12-12V200A190 190 0 0 0 10 200Z" vector-effect="non-scaling-stroke"/></svg>
           <span class="sceau" aria-hidden="true"><i></i><b>${esc(CFG.monogramme)}</b></span>
         </div>
@@ -466,6 +467,8 @@
       </footer>`;
     $$('.langues button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
     baieCle = '';
+    const ph = $('.baie-photo img');
+    if (ph) { const ok = () => ph.classList.add('pret'); if (ph.complete && ph.naturalWidth) ok(); else ph.addEventListener('load', ok, { once: true }); }
     chargerCiel();
   }
 
@@ -555,7 +558,7 @@
           <div class="bloc">
             <h2 class="titre r">${esc(m.galerieTitre)}</h2>
             <div class="galerie r">${m.photos.map((p, i) => `<figure><button type="button" data-photo="${i}" data-galerie="domaine" aria-label="${esc(p.l)}"><img src="img/${p.f}-t.webp" alt="${esc(p.l)}" loading="lazy" width="640" height="800"></button><figcaption><span>${deux(i + 1)}</span>${esc(p.l)}</figcaption></figure>`).join('')}</div>
-            <p class="aide">${ico('couleur')}${esc(m.galerieAide)}</p>
+            <p class="aide">${ico('agrandir')}${esc(m.galerieAide)}</p>
           </div>
         </div>`, PHOTO.domaine));
     }
@@ -570,7 +573,7 @@
           </div>
           <div class="bloc">
             <div class="galerie r">${p.photos.map((x, i) => `<figure><button type="button" data-photo="${i}" data-galerie="piscine" aria-label="${esc(x.l)}"><img src="img/${x.f}-t.webp" alt="${esc(x.l)}" loading="lazy" width="640" height="800"></button><figcaption><span>${deux(i + 1)}</span>${esc(x.l)}</figcaption></figure>`).join('')}</div>
-            <p class="aide">${ico('couleur')}${esc(t.domaine.galerieAide)}</p>
+            <p class="aide">${ico('agrandir')}${esc(t.domaine.galerieAide)}</p>
           </div>
         </div>`, PHOTO.piscine));
     }
@@ -692,23 +695,16 @@
     document.body.appendChild(c); setTimeout(() => c.remove(), 4000); vibre();
   }
 
-  /* ---------- Lightbox : la couleur revient ---------- */
+  /* ---------- Visionneuse ---------- */
   const lightbox = $('#lightbox');
   function ouvrirLightbox(i, liste) {
     const t = T(), photos = liste === 'lodges' ? t.domaine.lodges.map((l) => ({ f: l.f, l: `${l.t} · ${l.s}` })) : ((t[liste || 'domaine'] || {}).photos || []);
     lightbox.innerHTML = `<button type="button" class="fermer" aria-label="${esc(T().commun.fermer)}">${ico('close')}</button>
-      <div class="piste">${photos.map((p, k) => `<figure data-k="${k}"><div class="cadre"><img src="img/${p.f}-n.webp" alt="${esc(p.l)}" loading="${Math.abs(k - i) < 2 ? 'eager' : 'lazy'}"><img class="c" src="img/${p.f}-c.webp" alt="" loading="${Math.abs(k - i) < 2 ? 'eager' : 'lazy'}"></div><figcaption><span>${deux(k + 1)} / ${deux(photos.length)}</span>${esc(p.l)}</figcaption></figure>`).join('')}</div>`;
+      <div class="piste">${photos.map((p, k) => `<figure data-k="${k}"><div class="cadre"><img src="img/${p.f}-c.webp" alt="${esc(p.l)}" loading="${Math.abs(k - i) < 2 ? 'eager' : 'lazy'}"></div><figcaption><span>${deux(k + 1)} / ${deux(photos.length)}</span>${esc(p.l)}</figcaption></figure>`).join('')}</div>`;
     lightbox.classList.add('ouverte'); document.body.classList.add('lb-ouverte');
     const piste = $('.piste', lightbox);
-    requestAnimationFrame(() => { piste.scrollLeft = piste.clientWidth * i; colorer(); });
-    piste.addEventListener('scroll', () => { clearTimeout(piste._t); piste._t = setTimeout(colorer, 120); }, { passive: true });
+    requestAnimationFrame(() => { piste.scrollLeft = piste.clientWidth * i; });
     $('.fermer', lightbox).addEventListener('click', fermerLightbox);
-    function colorer() {
-      const k = Math.round(piste.scrollLeft / piste.clientWidth), fig = $(`figure[data-k="${k}"] .cadre`, lightbox);
-      if (!fig || fig.classList.contains('couleur')) return;
-      const c = $('.c', fig), go = () => setTimeout(() => fig.classList.add('couleur'), 350);
-      if (c.complete) go(); else c.addEventListener('load', go, { once: true });
-    }
   }
   function fermerLightbox() { lightbox.classList.remove('ouverte'); lightbox.innerHTML = ''; document.body.classList.remove('lb-ouverte'); }
 

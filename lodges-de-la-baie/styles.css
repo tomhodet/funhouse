@@ -543,3 +543,13 @@ h3.titre { font-size: 19px; margin-bottom: 6px; }
 .lodge-txt p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--ardoise); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .tags span { font-size: 10.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--or); padding: 6px 10px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--or-clair); white-space: nowrap; }
+
+/* Arche d'accueil en photo (CFG.archePhoto) : la piscine, qui respire doucement */
+.baie-photo { background: var(--nacre); }
+.baie-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.03); transform-origin: 50% 62%; transition: opacity 1.1s ease; }
+.baie-photo img.pret { opacity: 1; animation: lb-respire 30s ease-in-out infinite alternate; }
+.baie-photo::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(21, 42, 53, .12) 0%, rgba(21, 42, 53, 0) 26%, rgba(21, 42, 53, 0) 74%, rgba(21, 42, 53, .16) 100%); }
+@keyframes lb-respire { from { transform: scale(1.03); } to { transform: scale(1.11); } }
+@media (prefers-reduced-motion: reduce) { .baie-photo img.pret { animation: none; } }
+/* Écrans de 320 px : « Servon · Baie du Mont-Saint-Michel » tient sur une ligne */
+@media (max-width: 359px) { .lieu-mini { letter-spacing: .14em; padding-left: .14em; } }
