@@ -35,8 +35,8 @@ window.FH_CONFIG = {
     "avisGoogle": "https://g.page/r/CY7K22PkeGIoEAE/review"
   },
   "smsDepart": {
-    "fr": "Bonjour Alicia, nous venons de quitter Les Lodges de la Baie. Les clés sont dans la boîte. Merci pour tout !",
-    "en": "Hello Alicia, we have just left Les Lodges de la Baie. The keys are in the lockbox. Thank you for everything!"
+    "fr": "Bonjour Alicia, nous venons de quitter Les Lodges de la Baie. Tout est fermé à clé. Merci pour tout !",
+    "en": "Hello Alicia, we have just left Les Lodges de la Baie. Everything is locked. Thank you for everything!"
   },
   "smsDemande": {
     "fr": "Bonjour Alicia, nous sommes aux Lodges de la Baie et nous aurions besoin de : ",
@@ -264,7 +264,7 @@ window.FH_CONTENT = {
         [
           "key",
           "Arrivée autonome",
-          "Les clés vous attendent dans une boîte à clés sécurisée. Alicia vous envoie le code et les indications d'accès la veille de votre arrivée."
+          "Vous entrez en toute autonomie. La veille de votre arrivée, Alicia vous envoie par message toutes les indications d'accès."
         ],
         [
           "parking",
@@ -303,7 +303,7 @@ window.FH_CONTENT = {
           "Le mobilier est remis à sa place",
           "Le volet de la piscine est fermé",
           "Fenêtres fermées, lumières éteintes",
-          "Les lodges sont fermés à clé, les clés dans la boîte"
+          "Les lodges sont fermés à clé, les clés laissées comme indiqué par Alicia"
         ],
         "fini": "Tout est bon. Merci pour votre passage, et à très bientôt !",
         "prevenir": "Prévenir Alicia de notre départ",
@@ -1135,7 +1135,7 @@ window.FH_CONTENT = {
         [
           "key",
           "Self check-in",
-          "Your keys are waiting in a secure lockbox. Alicia sends you the code and access directions the day before you arrive."
+          "You check in on your own. The day before you arrive, Alicia sends you all the access details by message."
         ],
         [
           "parking",
@@ -1174,7 +1174,7 @@ window.FH_CONTENT = {
           "The furniture is back in its place",
           "The pool cover is closed",
           "Windows closed, lights off",
-          "The lodges are locked, keys in the lockbox"
+          "The lodges are locked, keys left as Alicia explained"
         ],
         "fini": "All done. Thank you for staying, and see you soon!",
         "prevenir": "Tell Alicia we have left",

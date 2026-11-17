@@ -2,9 +2,9 @@
    Pages, styles et scripts : réseau d'abord (les mises à jour arrivent tout de suite).
    Images et polices : cache d'abord.
    Changer VERSION à chaque mise à jour pour nettoyer l'ancien cache. */
-const VERSION = 'lodges-v1';
+const VERSION = 'lodges-v2';
 const COEUR = [
-  './', 'index.html', 'styles.css?v=1', 'app.js?v=1', 'content.js?v=1', 'cle.js', 'qrcode.min.js', 'manifest.webmanifest',
+  './', 'index.html', 'styles.css?v=1', 'app.js?v=1', 'content.js?v=2', 'cle.js', 'qrcode.min.js', 'manifest.webmanifest',
   'fonts/playfair-display-latin-500-normal.woff2', 'fonts/playfair-display-latin-500-italic.woff2',
   'fonts/montserrat-latin-400-normal.woff2', 'fonts/montserrat-latin-500-normal.woff2', 'fonts/satisfy-latin-400-normal.woff2',
   'img/logo-cdm.png'
